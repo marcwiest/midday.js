@@ -1,0 +1,156 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+}
+
+/* --- Fixed Header --- */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  z-index: 100;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 2rem;
+}
+
+header .logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+header ul {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+}
+
+header a {
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: inherit;
+  transition: opacity 0.2s;
+}
+
+header a:hover {
+  opacity: 0.7;
+}
+
+/* --- Variant Styles --- */
+.midday-header.default {
+  background: white;
+  color: #111;
+}
+
+.midday-header.dark {
+  background: #111;
+  color: white;
+}
+
+.midday-header.accent {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.midday-header.inverted {
+  background: #111;
+  color: #0ff;
+}
+
+/* --- Sections --- */
+section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+}
+
+section h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+section p {
+  max-width: 42ch;
+  text-align: center;
+  font-size: 1.125rem;
+  opacity: 0.8;
+}
+
+.hero {
+  background: #111;
+  color: white;
+}
+
+.content {
+  background: white;
+  color: #111;
+}
+
+.accent-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.dark-section {
+  background: #1a1a2e;
+  color: #eee;
+}
+
+.light-section {
+  background: #f5f5f5;
+  color: #333;
+}
+
+/* --- Demo Controls --- */
+.controls {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 200;
+}
+
+.controls button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s;
+}
+
+.controls button:hover {
+  background: rgba(0, 0, 0, 0.95);
+}
+
+.controls button.destructive {
+  background: rgba(180, 40, 40, 0.85);
+}
+
+.controls button.destructive:hover {
+  background: rgba(180, 40, 40, 1);
+}

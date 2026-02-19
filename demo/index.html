@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>midday.js — Demo</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+  <header data-midday>
+    <nav>
+      <div class="logo">midday.js</div>
+      <ul>
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section id="hero" class="hero" data-midday-section="dark">
+    <h2>Hero Section</h2>
+    <p>The header above uses the "dark" variant here — white text on a transparent background.</p>
+  </section>
+
+  <section id="about" class="content">
+    <h2>About Section</h2>
+    <p>No data-midday-section attribute — the header falls back to its "default" variant with a white background and dark text.</p>
+  </section>
+
+  <section class="accent-section" data-midday-section="accent">
+    <h2>Accent Section</h2>
+    <p>The "accent" variant activates here — the header adapts to complement the gradient background.</p>
+  </section>
+
+  <section class="light-section">
+    <h2>Light Section</h2>
+    <p>No variant specified. The default header style returns.</p>
+  </section>
+
+  <section class="dark-section" data-midday-section="inverted">
+    <h2>Inverted Section</h2>
+    <p>The "inverted" variant — dark background with cyan text on the header.</p>
+  </section>
+
+  <section id="work" class="content">
+    <h2>Work Section</h2>
+    <p>Back to the default variant again. Scroll up and down to see the transitions.</p>
+  </section>
+
+  <section class="hero" data-midday-section="dark">
+    <h2>Another Dark Section</h2>
+    <p>The same "dark" variant reused — demonstrating that multiple sections can share a variant.</p>
+  </section>
+
+  <section id="contact" class="light-section">
+    <h2>Contact Section</h2>
+    <p>Default variant. The footer of the demo page.</p>
+  </section>
+
+  <div class="controls">
+    <button id="btn-refresh">Refresh</button>
+    <button id="btn-destroy" class="destructive">Destroy</button>
+    <button id="btn-init" style="display:none;">Re-init</button>
+  </div>
+
+  <script type="module">
+    import { midday } from '../src/index.ts';
+
+    let instance = midday(document.querySelector('[data-midday]'), {
+      onChange: (variants) => {
+        console.log('Active variants:', variants);
+      },
+    });
+
+    document.getElementById('btn-refresh').addEventListener('click', () => {
+      instance.refresh();
+      console.log('Refreshed');
+    });
+
+    document.getElementById('btn-destroy').addEventListener('click', () => {
+      instance.destroy();
+      console.log('Destroyed');
+      document.getElementById('btn-destroy').style.display = 'none';
+      document.getElementById('btn-refresh').style.display = 'none';
+      document.getElementById('btn-init').style.display = '';
+    });
+
+    document.getElementById('btn-init').addEventListener('click', () => {
+      instance = midday(document.querySelector('[data-midday]'), {
+        onChange: (variants) => {
+          console.log('Active variants:', variants);
+        },
+      });
+      console.log('Re-initialized');
+      document.getElementById('btn-destroy').style.display = '';
+      document.getElementById('btn-refresh').style.display = '';
+      document.getElementById('btn-init').style.display = 'none';
+    });
+  </script>
+
+</body>
+</html>

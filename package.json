@@ -1,0 +1,39 @@
+{
+  "name": "midday.js",
+  "version": "0.1.0",
+  "description": "A modern vanilla JS plugin for fixed headers that change style as you scroll through sections. Zero dependencies. The spiritual successor to midnight.js.",
+  "type": "module",
+  "main": "./dist/midday.umd.js",
+  "module": "./dist/midday.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/midday.mjs",
+      "require": "./dist/midday.umd.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "header",
+    "fixed-header",
+    "scroll",
+    "clip-path",
+    "navigation",
+    "midnight.js",
+    "vanilla-js",
+    "no-dependencies"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vite": "^6.1.0"
+  }
+}
