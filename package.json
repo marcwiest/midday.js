@@ -11,6 +11,22 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/midday.mjs",
       "require": "./dist/midday.umd.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs"
+    },
+    "./vue": {
+      "types": "./dist/vue.d.ts",
+      "import": "./dist/vue.mjs"
+    },
+    "./svelte": {
+      "types": "./dist/svelte.d.ts",
+      "import": "./dist/svelte.mjs"
+    },
+    "./solid": {
+      "types": "./dist/solid.d.ts",
+      "import": "./dist/solid.mjs"
     }
   },
   "files": [
@@ -18,7 +34,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc --emitDeclarationOnly",
+    "build": "vite build && vite build --config vite.config.umd.ts && tsc --emitDeclarationOnly",
     "preview": "vite preview"
   },
   "keywords": [
@@ -29,11 +45,34 @@
     "navigation",
     "midnight.js",
     "vanilla-js",
-    "no-dependencies"
+    "no-dependencies",
+    "react",
+    "vue",
+    "svelte",
+    "solid"
   ],
   "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18",
+    "solid-js": ">=1",
+    "vue": ">=3"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    },
+    "solid-js": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@types/react": "^19.2.14",
+    "solid-js": "^1.9.11",
     "typescript": "^5.7.0",
-    "vite": "^6.1.0"
+    "vite": "^6.1.0",
+    "vue": "^3.5.28"
   }
 }
