@@ -79,12 +79,18 @@ header a:hover {
 }
 
 #dock-default {
-  background: white;
+  background: transparent;
   color: #111;
 }
 
 #dock-dark {
-  background: #111;
+  background: transparent;
+  color: white;
+  pointer-events: none;
+}
+
+#dock-accent {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   pointer-events: none;
 }

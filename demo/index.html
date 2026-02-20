@@ -29,6 +29,9 @@
       <span class="dock-label">Dark</span>
       <span class="dock-progress-text" id="progress-dark">0%</span>
     </div>
+    <div class="dock-variant" id="dock-accent" aria-hidden="true" inert>
+      <span class="dock-label">Accent</span>
+    </div>
     <div class="dock-variant" id="dock-inverted" aria-hidden="true" inert>
       <span class="dock-icon">&#9670;</span>
       <span class="dock-label">Inverted</span>
@@ -46,7 +49,7 @@
     <p>No data-midday-section attribute — both bars fall back to their "default" variant.</p>
   </section>
 
-  <section class="accent-section" data-midday-section="accent" data-midday-target="top">
+  <section class="accent-section" data-midday-section="accent" data-midday-target="top bottom">
     <h2>Accent Section</h2>
     <p>Only the top header changes to "accent" here. The bottom dock stays default (target="top").</p>
   </section>
@@ -93,6 +96,7 @@
       variants: {
         default: document.getElementById('dock-default'),
         dark: document.getElementById('dock-dark'),
+        accent: document.getElementById('dock-accent'),
         inverted: document.getElementById('dock-inverted'),
       },
       name: 'bottom',
