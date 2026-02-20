@@ -1,18 +1,7 @@
-export interface MiddayOptions {
-  /** Class applied to areas where no section variant is active */
-  defaultClass: string;
-  /** CSS selector to find section elements */
-  sectionSelector: string;
-  /** Data attribute on sections that holds the variant name */
-  sectionAttr: string;
-  /** Class added to each variant wrapper element */
-  headerClass: string;
-  /** Called when the set of visible variants changes */
-  onChange: ((variants: ActiveVariant[]) => void) | null;
-}
+// --- Shared types ---
 
 export interface ActiveVariant {
-  /** The variant name (from data attribute) */
+  /** The variant name (from data-midday-section value) */
   name: string;
   /** How much of the header this variant covers (0 to 1) */
   progress: number;
@@ -35,4 +24,40 @@ export interface SectionData {
 export interface VariantState {
   wrapper: HTMLElement;
   name: string;
+}
+
+// --- Auto mode types ---
+
+export interface MiddayOptions {
+  /** Called when the set of visible variants changes */
+  onChange?: ((variants: ActiveVariant[]) => void) | null;
+}
+
+// --- Headless mode types ---
+
+export interface MiddayHeadlessOptions {
+  /** The fixed/sticky header element (used for position calculations) */
+  header: HTMLElement;
+  /** Map of variant name to wrapper element. The plugin manages clip-paths on these. */
+  variants: Record<string, HTMLElement>;
+  /** Which key in `variants` is the default (shown where no section overlaps). Defaults to 'default'. */
+  defaultVariant?: string;
+  /** Called when the set of visible variants changes */
+  onChange?: ((variants: ActiveVariant[]) => void) | null;
+}
+
+// --- Engine types (internal) ---
+
+export interface EngineConfig {
+  header: HTMLElement;
+  variants: VariantState[];
+  defaultName: string;
+  sections: SectionData[];
+  onChange?: ((variants: ActiveVariant[]) => void) | null;
+}
+
+export interface Engine {
+  recalculate: () => void;
+  update: (variants: VariantState[], sections: SectionData[]) => void;
+  destroy: () => void;
 }

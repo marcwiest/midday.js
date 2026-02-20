@@ -52,22 +52,22 @@ header a:hover {
 }
 
 /* --- Variant Styles --- */
-.midday-header.default {
+[data-midday-variant="default"] {
   background: white;
   color: #111;
 }
 
-.midday-header.dark {
+[data-midday-variant="dark"] {
   background: #111;
   color: white;
 }
 
-.midday-header.accent {
+[data-midday-variant="accent"] {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
 
-.midday-header.inverted {
+[data-midday-variant="inverted"] {
   background: #111;
   color: #0ff;
 }

@@ -1,31 +1,43 @@
 import { createMidday } from './core';
-import type { MiddayOptions, MiddayInstance, ActiveVariant } from './types';
+import { createMiddayHeadless } from './headless';
+import type {
+  MiddayOptions,
+  MiddayHeadlessOptions,
+  MiddayInstance,
+  ActiveVariant,
+} from './types';
 
 /**
- * Initialize midday.js on a fixed header element.
+ * Auto mode — Initialize midday.js on a fixed header element.
+ * Automatically clones header content for each variant and manages the DOM.
  *
- * @param header - The fixed/sticky header element to enhance
- * @param options - Configuration options
- * @returns An instance with refresh() and destroy() methods
+ * @param header - The fixed/sticky header element
+ * @param options - Optional configuration
+ * @returns Instance with refresh() and destroy() methods
  *
  * @example
  * ```js
- * const instance = midday(document.querySelector('header'), {
- *   defaultClass: 'default',
- * });
- *
- * // After DOM changes:
- * instance.refresh();
- *
- * // Cleanup:
- * instance.destroy();
+ * const instance = midday(document.querySelector('[data-midday]'));
  * ```
  */
 export function midday(
   header: HTMLElement,
-  options?: Partial<MiddayOptions>,
+  options?: MiddayOptions,
 ): MiddayInstance {
   return createMidday(header, options);
 }
 
-export type { MiddayOptions, MiddayInstance, ActiveVariant };
+/**
+ * Headless mode — Bring your own variant elements.
+ * Manages only clip-paths on pre-rendered elements. No DOM cloning.
+ *
+ * @param options - Header, variant elements, and optional config
+ * @returns Instance with refresh() and destroy() methods
+ */
+export function middayHeadless(
+  options: MiddayHeadlessOptions,
+): MiddayInstance {
+  return createMiddayHeadless(options);
+}
+
+export type { MiddayOptions, MiddayHeadlessOptions, MiddayInstance, ActiveVariant };
