@@ -20,9 +20,19 @@
     </nav>
   </header>
 
-  <nav class="dock" data-midday="bottom">
-    <div class="dock-inner">
-      <span>Scroll position</span>
+  <nav class="dock">
+    <div class="dock-variant" id="dock-default">
+      <span class="dock-label">Default</span>
+      <span class="dock-progress-text" id="progress-default">0%</span>
+    </div>
+    <div class="dock-variant" id="dock-dark" aria-hidden="true" inert>
+      <span class="dock-label">Dark</span>
+      <span class="dock-progress-text" id="progress-dark">0%</span>
+    </div>
+    <div class="dock-variant" id="dock-inverted" aria-hidden="true" inert>
+      <span class="dock-icon">&#9670;</span>
+      <span class="dock-label">Inverted</span>
+      <span class="dock-icon">&#9670;</span>
     </div>
   </nav>
 
@@ -73,19 +83,40 @@
   </div>
 
   <script type="module">
-    import { midday } from '../src/index.ts';
+    import { midday, middayHeadless } from '../src/index.ts';
 
-    let topInstance = midday(document.querySelector('[data-midday="top"]'), {
-      onChange: (variants) => {
-        console.log('Top:', variants);
-      },
-    });
+    const progressDefault = document.getElementById('progress-default');
+    const progressDark = document.getElementById('progress-dark');
 
-    let bottomInstance = midday(document.querySelector('[data-midday="bottom"]'), {
-      onChange: (variants) => {
-        console.log('Bottom:', variants);
-      },
-    });
+    function initTop() {
+      return midday(document.querySelector('[data-midday="top"]'), {
+        onChange: (variants) => {
+          console.log('Top (auto):', variants);
+        },
+      });
+    }
+
+    function initBottom() {
+      return middayHeadless({
+        header: document.querySelector('.dock'),
+        variants: {
+          default: document.getElementById('dock-default'),
+          dark: document.getElementById('dock-dark'),
+          inverted: document.getElementById('dock-inverted'),
+        },
+        name: 'bottom',
+        onChange: (variants) => {
+          console.log('Bottom (headless):', variants);
+          const def = variants.find((v) => v.name === 'default');
+          const dark = variants.find((v) => v.name === 'dark');
+          progressDefault.textContent = def ? `${Math.round(def.progress * 100)}%` : '0%';
+          progressDark.textContent = dark ? `${Math.round(dark.progress * 100)}%` : '0%';
+        },
+      });
+    }
+
+    let topInstance = initTop();
+    let bottomInstance = initBottom();
 
     document.getElementById('btn-refresh').addEventListener('click', () => {
       topInstance.refresh();
@@ -103,16 +134,8 @@
     });
 
     document.getElementById('btn-init').addEventListener('click', () => {
-      topInstance = midday(document.querySelector('[data-midday="top"]'), {
-        onChange: (variants) => {
-          console.log('Top:', variants);
-        },
-      });
-      bottomInstance = midday(document.querySelector('[data-midday="bottom"]'), {
-        onChange: (variants) => {
-          console.log('Bottom:', variants);
-        },
-      });
+      topInstance = initTop();
+      bottomInstance = initBottom();
       console.log('Re-initialized');
       document.getElementById('btn-destroy').style.display = '';
       document.getElementById('btn-refresh').style.display = '';

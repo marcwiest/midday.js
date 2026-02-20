@@ -25,7 +25,7 @@ header {
 
 .dock {
   bottom: 0;
-  height: 48px;
+  height: 64px;
 }
 
 header nav {
@@ -60,17 +60,51 @@ header a:hover {
   opacity: 0.7;
 }
 
-/* --- App Bar Inner --- */
-.dock-inner {
+/* --- Dock Variants (headless — each has different markup) --- */
+.dock-variant {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  height: 100%;
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  will-change: clip-path;
+}
+
+#dock-default {
+  background: white;
+  color: #111;
+}
+
+#dock-dark {
+  background: #111;
+  color: white;
+  pointer-events: none;
+}
+
+#dock-inverted {
+  background: #111;
+  color: #0ff;
+  pointer-events: none;
+  gap: 1rem;
+}
+
+.dock-icon {
+  font-size: 0.6rem;
+  opacity: 0.7;
+}
+
+.dock-progress-text {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.5;
+  min-width: 3ch;
 }
 
 /* --- Variant Styles (shared by header and dock) --- */
@@ -145,7 +179,7 @@ section p {
 /* --- Demo Controls --- */
 .controls {
   position: fixed;
-  bottom: 4.5rem;
+  bottom: 5.5rem;
   right: 1.5rem;
   display: flex;
   gap: 0.5rem;
