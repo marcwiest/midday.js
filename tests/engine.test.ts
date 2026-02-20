@@ -1,30 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createEngine } from '../src/engine';
 import type { EngineConfig, VariantState, SectionData } from '../src/types';
-
-function mockRect(el: Element, rect: Partial<DOMRect>) {
-  el.getBoundingClientRect = () =>
-    ({
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      width: 0,
-      height: 0,
-      x: 0,
-      y: 0,
-      toJSON() {},
-      ...rect,
-    }) as DOMRect;
-}
-
-function setScrollY(value: number) {
-  Object.defineProperty(window, 'scrollY', {
-    value,
-    writable: true,
-    configurable: true,
-  });
-}
+import { mockRect, setScrollY } from './helpers';
 
 function makeVariant(name: string): VariantState {
   return { name, wrapper: document.createElement('div') };
@@ -143,6 +120,50 @@ describe('createEngine — clip-path computation', () => {
     expect(darkWrapper.style.clipPath).toBe('inset(0px 0 30px 0)');
     // light covers bottom 20px: topInset=40, bottomInset=0
     expect(lightWrapper.style.clipPath).toBe('inset(40px 0 0px 0)');
+    engine.destroy();
+  });
+
+  it('scrolling into a section updates clip-paths', () => {
+    // Section at document y=500 — initially no overlap with header (0-60)
+    const config = createConfig({
+      sections: [makeSection('dark', { top: 500, height: 400 })],
+    });
+    const engine = createEngine(config);
+
+    const darkWrapper = config.variants.find((v) => v.name === 'dark')!.wrapper;
+    const defaultWrapper = config.variants.find(
+      (v) => v.name === 'default',
+    )!.wrapper;
+
+    // Initially: no overlap
+    expect(darkWrapper.style.clipPath).toBe('inset(0 0 100% 0)');
+    expect(defaultWrapper.style.clipPath).toBe('inset(0)');
+
+    // Scroll so section enters header region: sectionViewTop = 500 - 470 = 30
+    setScrollY(470);
+    window.dispatchEvent(new Event('scroll'));
+
+    // dark: topInset=30, bottomInset=0
+    expect(darkWrapper.style.clipPath).toBe('inset(30px 0 0px 0)');
+    // default: partial gap above
+    expect(defaultWrapper.style.clipPath).toBe('inset(0 0 30px 0)');
+    engine.destroy();
+  });
+
+  it('same-variant sections merge clip regions (min insets)', () => {
+    // Two "dark" sections covering different header regions
+    const config = createConfig({
+      sections: [
+        makeSection('dark', { top: 0, height: 30 }),  // covers 0-30px
+        makeSection('dark', { top: 40, height: 400 }), // covers 40-60px
+      ],
+    });
+    const engine = createEngine(config);
+
+    const darkWrapper = config.variants.find((v) => v.name === 'dark')!.wrapper;
+
+    // Merged: min(topInset=0,40)=0, min(bottomInset=30,0)=0 → fully visible
+    expect(darkWrapper.style.clipPath).toBe('inset(0px 0 0px 0)');
     engine.destroy();
   });
 
