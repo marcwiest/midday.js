@@ -1,15 +1,12 @@
 import type {
   MiddayOptions,
   MiddayInstance,
-  SectionData,
   VariantState,
   Engine,
 } from './types';
-import { cacheSectionBounds } from './utils';
+import { scanSections } from './utils';
 import { createEngine } from './engine';
 
-const SECTION_SELECTOR = '[data-midday-section]';
-const SECTION_ATTR = 'data-midday-section';
 const VARIANT_ATTR = 'data-midday-variant';
 const DEFAULT_NAME = 'default';
 
@@ -18,6 +15,7 @@ export function createMidday(
   options: MiddayOptions = {},
 ): MiddayInstance {
   const { onChange } = options;
+  const instanceName = options.name ?? (header.getAttribute('data-midday') || undefined);
 
   // Store original state for destroy()
   const originalHTML = header.innerHTML;
@@ -26,21 +24,8 @@ export function createMidday(
   let engine: Engine | null = null;
   let variants: VariantState[] = [];
 
-  function scanSections(): SectionData[] {
-    const els = document.querySelectorAll(SECTION_SELECTOR);
-    const sections: SectionData[] = [];
-    for (const el of els) {
-      const variant = el.getAttribute(SECTION_ATTR);
-      if (variant) {
-        sections.push({ el, variant, top: 0, height: 0 });
-      }
-    }
-    cacheSectionBounds(sections);
-    return sections;
-  }
-
   function buildVariants(): VariantState[] {
-    const sections = scanSections();
+    const sections = scanSections(instanceName);
     const variantNames = new Set<string>();
     for (const s of sections) {
       variantNames.add(s.variant);
@@ -100,7 +85,7 @@ export function createMidday(
   }
 
   function init(): void {
-    const sections = scanSections();
+    const sections = scanSections(instanceName);
     variants = buildVariants();
     engine = createEngine({
       header,
@@ -115,7 +100,7 @@ export function createMidday(
     for (const v of variants) {
       v.wrapper.remove();
     }
-    const sections = scanSections();
+    const sections = scanSections(instanceName);
     variants = buildVariants();
     engine?.update(variants, sections);
   }

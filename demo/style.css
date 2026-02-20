@@ -10,13 +10,22 @@ body {
 }
 
 /* --- Fixed Header --- */
-header {
+header,
+.dock {
   position: fixed;
-  top: 0;
   left: 0;
   right: 0;
-  height: 72px;
   z-index: 100;
+}
+
+header {
+  top: 0;
+  height: 72px;
+}
+
+.dock {
+  bottom: 0;
+  height: 48px;
 }
 
 header nav {
@@ -51,7 +60,20 @@ header a:hover {
   opacity: 0.7;
 }
 
-/* --- Variant Styles --- */
+/* --- App Bar Inner --- */
+.dock-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 100%;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* --- Variant Styles (shared by header and dock) --- */
 [data-midday-variant="default"] {
   background: white;
   color: #111;
@@ -123,7 +145,7 @@ section p {
 /* --- Demo Controls --- */
 .controls {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: 4.5rem;
   right: 1.5rem;
   display: flex;
   gap: 0.5rem;

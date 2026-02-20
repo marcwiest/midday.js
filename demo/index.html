@@ -8,7 +8,7 @@
 </head>
 <body>
 
-  <header data-midday>
+  <header data-midday="top">
     <nav>
       <div class="logo">midday.js</div>
       <ul>
@@ -20,29 +20,35 @@
     </nav>
   </header>
 
+  <nav class="dock" data-midday="bottom">
+    <div class="dock-inner">
+      <span>Scroll position</span>
+    </div>
+  </nav>
+
   <section id="hero" class="hero" data-midday-section="dark">
     <h2>Hero Section</h2>
-    <p>The header above uses the "dark" variant here — white text on a transparent background.</p>
+    <p>Both header and dock use the "dark" variant here (no target — applies to all).</p>
   </section>
 
   <section id="about" class="content">
     <h2>About Section</h2>
-    <p>No data-midday-section attribute — the header falls back to its "default" variant with a white background and dark text.</p>
+    <p>No data-midday-section attribute — both bars fall back to their "default" variant.</p>
   </section>
 
-  <section class="accent-section" data-midday-section="accent">
+  <section class="accent-section" data-midday-section="accent" data-midday-target="top">
     <h2>Accent Section</h2>
-    <p>The "accent" variant activates here — the header adapts to complement the gradient background.</p>
+    <p>Only the top header changes to "accent" here. The bottom dock stays default (target="top").</p>
   </section>
 
   <section class="light-section">
     <h2>Light Section</h2>
-    <p>No variant specified. The default header style returns.</p>
+    <p>No variant specified. Both bars return to default.</p>
   </section>
 
-  <section class="dark-section" data-midday-section="inverted">
+  <section class="dark-section" data-midday-section="inverted" data-midday-target="top bottom">
     <h2>Inverted Section</h2>
-    <p>The "inverted" variant — dark background with cyan text on the header.</p>
+    <p>Both bars change to "inverted" — targeting both explicitly (target="top bottom").</p>
   </section>
 
   <section id="work" class="content">
@@ -50,9 +56,9 @@
     <p>Back to the default variant again. Scroll up and down to see the transitions.</p>
   </section>
 
-  <section class="hero" data-midday-section="dark">
-    <h2>Another Dark Section</h2>
-    <p>The same "dark" variant reused — demonstrating that multiple sections can share a variant.</p>
+  <section class="hero" data-midday-section="dark" data-midday-target="bottom">
+    <h2>Bottom-only Dark Section</h2>
+    <p>Only the bottom dock changes to "dark" here. The top header stays default (target="bottom").</p>
   </section>
 
   <section id="contact" class="light-section">
@@ -69,19 +75,27 @@
   <script type="module">
     import { midday } from '../src/index.ts';
 
-    let instance = midday(document.querySelector('[data-midday]'), {
+    let topInstance = midday(document.querySelector('[data-midday="top"]'), {
       onChange: (variants) => {
-        console.log('Active variants:', variants);
+        console.log('Top:', variants);
+      },
+    });
+
+    let bottomInstance = midday(document.querySelector('[data-midday="bottom"]'), {
+      onChange: (variants) => {
+        console.log('Bottom:', variants);
       },
     });
 
     document.getElementById('btn-refresh').addEventListener('click', () => {
-      instance.refresh();
+      topInstance.refresh();
+      bottomInstance.refresh();
       console.log('Refreshed');
     });
 
     document.getElementById('btn-destroy').addEventListener('click', () => {
-      instance.destroy();
+      topInstance.destroy();
+      bottomInstance.destroy();
       console.log('Destroyed');
       document.getElementById('btn-destroy').style.display = 'none';
       document.getElementById('btn-refresh').style.display = 'none';
@@ -89,9 +103,14 @@
     });
 
     document.getElementById('btn-init').addEventListener('click', () => {
-      instance = midday(document.querySelector('[data-midday]'), {
+      topInstance = midday(document.querySelector('[data-midday="top"]'), {
         onChange: (variants) => {
-          console.log('Active variants:', variants);
+          console.log('Top:', variants);
+        },
+      });
+      bottomInstance = midday(document.querySelector('[data-midday="bottom"]'), {
+        onChange: (variants) => {
+          console.log('Bottom:', variants);
         },
       });
       console.log('Re-initialized');

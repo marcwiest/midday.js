@@ -34,3 +34,33 @@ export function cacheSectionBounds(sections: SectionData[]): void {
     section.height = bounds.height;
   }
 }
+
+const SECTION_SELECTOR = '[data-midday-section]';
+const SECTION_ATTR = 'data-midday-section';
+const TARGET_ATTR = 'data-midday-target';
+
+/**
+ * Scan the document for sections, optionally filtered by instance name.
+ * - Sections without data-midday-target apply to ALL instances.
+ * - Sections with data-midday-target apply only to the listed instance(s) (space-separated).
+ */
+export function scanSections(instanceName?: string): SectionData[] {
+  const els = document.querySelectorAll(SECTION_SELECTOR);
+  const sections: SectionData[] = [];
+
+  for (const el of els) {
+    const variant = el.getAttribute(SECTION_ATTR);
+    if (!variant) continue;
+
+    const target = el.getAttribute(TARGET_ATTR);
+    if (target) {
+      // Section is targeted — only include if this instance is listed
+      if (!instanceName || !target.split(' ').includes(instanceName)) continue;
+    }
+
+    sections.push({ el, variant, top: 0, height: 0 });
+  }
+
+  cacheSectionBounds(sections);
+  return sections;
+}

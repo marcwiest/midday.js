@@ -301,6 +301,33 @@ createMidday(() => headerEl, { onChange: (v) => console.log(v) });
 <header use:midday={{ onChange: (v) => console.log(v) }}></header>
 ```
 
+## Multiple Instances
+
+midday.js supports multiple independent fixed elements on the same page (e.g., a top header and a bottom app-bar). Name each instance via the `data-midday` attribute and use `data-midday-target` on sections to control which instance they affect.
+
+```html
+<header data-midday="top">...</header>
+<nav class="app-bar" data-midday="bottom">...</nav>
+
+<!-- Targets only the top header -->
+<section data-midday-section="accent" data-midday-target="top">...</section>
+
+<!-- Targets both (space-separated) -->
+<section data-midday-section="inverted" data-midday-target="top bottom">...</section>
+
+<!-- No target — applies to ALL instances -->
+<section data-midday-section="dark">...</section>
+```
+
+```js
+import { midday } from 'midday.js';
+
+const top = midday(document.querySelector('[data-midday="top"]'));
+const bottom = midday(document.querySelector('[data-midday="bottom"]'));
+```
+
+Each instance runs its own engine and only reacts to its own sections. The instance name defaults to the element's `data-midday` attribute value, or you can set it explicitly via `options.name`.
+
 ## SSR & SEO
 
 midday.js is designed to be SSR-safe by default.

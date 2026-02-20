@@ -1,15 +1,11 @@
 import type {
   MiddayHeadlessOptions,
   MiddayInstance,
-  SectionData,
   VariantState,
   Engine,
 } from './types';
-import { cacheSectionBounds } from './utils';
+import { scanSections } from './utils';
 import { createEngine } from './engine';
-
-const SECTION_SELECTOR = '[data-midday-section]';
-const SECTION_ATTR = 'data-midday-section';
 
 export function createMiddayHeadless(
   options: MiddayHeadlessOptions,
@@ -18,23 +14,11 @@ export function createMiddayHeadless(
     header,
     variants: variantMap,
     defaultVariant = 'default',
+    name: instanceName,
     onChange,
   } = options;
 
   let engine: Engine | null = null;
-
-  function scanSections(): SectionData[] {
-    const els = document.querySelectorAll(SECTION_SELECTOR);
-    const sections: SectionData[] = [];
-    for (const el of els) {
-      const variant = el.getAttribute(SECTION_ATTR);
-      if (variant) {
-        sections.push({ el, variant, top: 0, height: 0 });
-      }
-    }
-    cacheSectionBounds(sections);
-    return sections;
-  }
 
   function toVariantStates(): VariantState[] {
     return Object.entries(variantMap).map(([name, wrapper]) => ({
@@ -44,7 +28,7 @@ export function createMiddayHeadless(
   }
 
   function init(): void {
-    const sections = scanSections();
+    const sections = scanSections(instanceName);
     engine = createEngine({
       header,
       variants: toVariantStates(),
@@ -55,7 +39,7 @@ export function createMiddayHeadless(
   }
 
   function refresh(): void {
-    const sections = scanSections();
+    const sections = scanSections(instanceName);
     engine?.update(toVariantStates(), sections);
   }
 

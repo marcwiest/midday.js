@@ -29,6 +29,8 @@ export interface VariantState {
 // --- Auto mode types ---
 
 export interface MiddayOptions {
+  /** Instance name for multi-instance scoping. Sections with a matching data-midday-target will be claimed by this instance. Defaults to the header's data-midday attribute value. */
+  name?: string;
   /** Called when the set of visible variants changes */
   onChange?: ((variants: ActiveVariant[]) => void) | null;
 }
@@ -42,6 +44,8 @@ export interface MiddayHeadlessOptions {
   variants: Record<string, HTMLElement>;
   /** Which key in `variants` is the default (shown where no section overlaps). Defaults to 'default'. */
   defaultVariant?: string;
+  /** Instance name for multi-instance scoping. Sections with a matching data-midday-target will be claimed by this instance. */
+  name?: string;
   /** Called when the set of visible variants changes */
   onChange?: ((variants: ActiveVariant[]) => void) | null;
 }
