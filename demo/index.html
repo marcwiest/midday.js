@@ -76,70 +76,33 @@
     <p>Default variant. The footer of the demo page.</p>
   </section>
 
-  <div class="controls">
-    <button id="btn-refresh">Refresh</button>
-    <button id="btn-destroy" class="destructive">Destroy</button>
-    <button id="btn-init" style="display:none;">Re-init</button>
-  </div>
-
   <script type="module">
     import { midday, middayHeadless } from '../src/index.ts';
 
     const progressDefault = document.getElementById('progress-default');
     const progressDark = document.getElementById('progress-dark');
 
-    function initTop() {
-      return midday(document.querySelector('[data-midday="top"]'), {
-        onChange: (variants) => {
-          console.log('Top (auto):', variants);
-        },
-      });
-    }
-
-    function initBottom() {
-      return middayHeadless({
-        header: document.querySelector('.dock'),
-        variants: {
-          default: document.getElementById('dock-default'),
-          dark: document.getElementById('dock-dark'),
-          inverted: document.getElementById('dock-inverted'),
-        },
-        name: 'bottom',
-        onChange: (variants) => {
-          console.log('Bottom (headless):', variants);
-          const def = variants.find((v) => v.name === 'default');
-          const dark = variants.find((v) => v.name === 'dark');
-          progressDefault.textContent = def ? `${Math.round(def.progress * 100)}%` : '0%';
-          progressDark.textContent = dark ? `${Math.round(dark.progress * 100)}%` : '0%';
-        },
-      });
-    }
-
-    let topInstance = initTop();
-    let bottomInstance = initBottom();
-
-    document.getElementById('btn-refresh').addEventListener('click', () => {
-      topInstance.refresh();
-      bottomInstance.refresh();
-      console.log('Refreshed');
+    midday(document.querySelector('[data-midday="top"]'), {
+      onChange: (variants) => {
+        console.log('Top (auto):', variants);
+      },
     });
 
-    document.getElementById('btn-destroy').addEventListener('click', () => {
-      topInstance.destroy();
-      bottomInstance.destroy();
-      console.log('Destroyed');
-      document.getElementById('btn-destroy').style.display = 'none';
-      document.getElementById('btn-refresh').style.display = 'none';
-      document.getElementById('btn-init').style.display = '';
-    });
-
-    document.getElementById('btn-init').addEventListener('click', () => {
-      topInstance = initTop();
-      bottomInstance = initBottom();
-      console.log('Re-initialized');
-      document.getElementById('btn-destroy').style.display = '';
-      document.getElementById('btn-refresh').style.display = '';
-      document.getElementById('btn-init').style.display = 'none';
+    middayHeadless({
+      header: document.querySelector('.dock'),
+      variants: {
+        default: document.getElementById('dock-default'),
+        dark: document.getElementById('dock-dark'),
+        inverted: document.getElementById('dock-inverted'),
+      },
+      name: 'bottom',
+      onChange: (variants) => {
+        console.log('Bottom (headless):', variants);
+        const def = variants.find((v) => v.name === 'default');
+        const dark = variants.find((v) => v.name === 'dark');
+        progressDefault.textContent = def ? `${Math.round(def.progress * 100)}%` : '0%';
+        progressDark.textContent = dark ? `${Math.round(dark.progress * 100)}%` : '0%';
+      },
     });
   </script>
 

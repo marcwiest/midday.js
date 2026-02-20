@@ -100,6 +100,8 @@ export function createMidday(
     for (const v of variants) {
       v.wrapper.remove();
     }
+    // Restore original content so buildVariants() has children to template from
+    header.innerHTML = originalHTML;
     const sections = scanSections(instanceName);
     variants = buildVariants();
     engine?.update(variants, sections);

@@ -175,38 +175,3 @@ section p {
   background: #f5f5f5;
   color: #333;
 }
-
-/* --- Demo Controls --- */
-.controls {
-  position: fixed;
-  bottom: 5.5rem;
-  right: 1.5rem;
-  display: flex;
-  gap: 0.5rem;
-  z-index: 200;
-}
-
-.controls button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  backdrop-filter: blur(8px);
-  transition: background 0.2s;
-}
-
-.controls button:hover {
-  background: rgba(0, 0, 0, 0.95);
-}
-
-.controls button.destructive {
-  background: rgba(180, 40, 40, 0.85);
-}
-
-.controls button.destructive:hover {
-  background: rgba(180, 40, 40, 1);
-}
