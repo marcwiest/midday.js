@@ -200,7 +200,9 @@ function Header() {
 
 ### Vue
 
-```vue
+Composable:
+
+```html
 <script setup>
 import { ref } from 'vue';
 import { useMidday } from 'midday.js/vue';
@@ -216,9 +218,23 @@ useMidday(headerRef);
 </template>
 ```
 
+Or as a directive (import as `vMidday` for auto-registration in `<script setup>`):
+
+```html
+<script setup>
+import { vMidday } from 'midday.js/vue';
+</script>
+
+<template>
+  <header v-midday>
+    <Nav />
+  </header>
+</template>
+```
+
 ### Svelte
 
-```svelte
+```html
 <script>
   import { midday } from 'midday.js/svelte';
 </script>
@@ -229,6 +245,8 @@ useMidday(headerRef);
 ```
 
 ### Solid
+
+Primitive:
 
 ```jsx
 import { createMidday } from 'midday.js/solid';
@@ -245,16 +263,42 @@ function Header() {
 }
 ```
 
+Or as a directive:
+
+```jsx
+import { midday } from 'midday.js/solid';
+
+function Header() {
+  return (
+    <header use:midday style={{ position: 'fixed', top: '0', left: '0', right: '0' }}>
+      <Nav />
+    </header>
+  );
+}
+```
+
 ### Passing options
 
-All adapters accept `onChange` as an optional second argument:
+All adapters accept `onChange`:
 
-```js
+```jsx
 // React
 useMidday(headerRef, { onChange: (v) => console.log(v) });
 
+// Vue (composable)
+useMidday(headerRef, { onChange: (v) => console.log(v) });
+
+// Vue (directive)
+<header v-midday="{ onChange: (v) => console.log(v) }"></header>
+
 // Svelte
-<header use:midday={{ onChange: (v) => console.log(v) }}>
+<header use:midday={{ onChange: (v) => console.log(v) }}></header>
+
+// Solid (primitive)
+createMidday(() => headerEl, { onChange: (v) => console.log(v) });
+
+// Solid (directive)
+<header use:midday={{ onChange: (v) => console.log(v) }}></header>
 ```
 
 ## SSR & SEO

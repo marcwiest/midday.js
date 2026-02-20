@@ -26,3 +26,24 @@ export function createMidday(
 
   return () => instance;
 }
+
+/**
+ * Solid directive for midday.js (auto mode).
+ * Usage: <header use:midday> or <header use:midday={{ onChange }}>
+ *
+ * TypeScript: extend JSX.DirectiveFunctions in your app:
+ *   declare module "solid-js" {
+ *     namespace JSX {
+ *       interface DirectiveFunctions {
+ *         midday: typeof import('midday.js/solid').midday;
+ *       }
+ *     }
+ *   }
+ */
+export function midday(el: HTMLElement, accessor: () => MiddayOptions | undefined): void {
+  const instance = createMiddayCore(el, accessor());
+
+  onCleanup(() => {
+    instance.destroy();
+  });
+}
