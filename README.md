@@ -1,8 +1,15 @@
 # midday.js
 
+[![npm version](https://img.shields.io/npm/v/@marcwiest/midday.js)](https://www.npmjs.com/package/@marcwiest/midday.js)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@marcwiest/midday.js)](https://bundlephobia.com/package/@marcwiest/midday.js)
+[![CI](https://github.com/marcwiest/midday.js/actions/workflows/ci.yml/badge.svg)](https://github.com/marcwiest/midday.js/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A modern, zero-dependency vanilla JS plugin for fixed headers that change style as you scroll through page sections. The spiritual successor to [midnight.js](https://github.com/Aerolab/midnight.js).
 
 **~1 kB gzipped** (auto mode) | TypeScript | Framework adapters (React, Vue, Svelte, Solid) included
+
+**[Live Demo](https://marcwiest.github.io/midday.js/)**
 
 ## Background
 
@@ -18,13 +25,13 @@ A modern, zero-dependency vanilla JS plugin for fixed headers that change style 
 ## Install
 
 ```bash
-npm install midday.js
+npm install @marcwiest/midday.js
 ```
 
 Or via CDN (UMD):
 
 ```html
-<script src="https://unpkg.com/midday.js/dist/midday.umd.js"></script>
+<script src="https://unpkg.com/@marcwiest/midday.js/dist/midday.umd.js"></script>
 ```
 
 ## Quick Start
@@ -58,7 +65,7 @@ You write a single header. Each section declares which header style it wants via
 ### 2. Initialize
 
 ```js
-import { midday } from 'midday.js';
+import { midday } from '@marcwiest/midday.js';
 
 const instance = midday(document.querySelector('[data-midday]'));
 ```
@@ -137,7 +144,7 @@ const instance = midday(document.querySelector('[data-midday]'), {
 You provide pre-rendered variant elements. The plugin only manages `clip-path` values. No DOM cloning. Use this when you need **different markup** (not just different styles) per variant.
 
 ```js
-import { middayHeadless } from 'midday.js';
+import { middayHeadless } from '@marcwiest/midday.js';
 
 const instance = middayHeadless({
   header: document.querySelector('header'),
@@ -184,7 +191,7 @@ The adapters wrap **auto mode** — your component renders a single header eleme
 
 ```jsx
 import { useRef } from 'react';
-import { useMidday } from 'midday.js/react';
+import { useMidday } from '@marcwiest/midday.js/react';
 
 function Header() {
   const headerRef = useRef(null);
@@ -205,7 +212,7 @@ Composable:
 ```html
 <script setup>
 import { ref } from 'vue';
-import { useMidday } from 'midday.js/vue';
+import { useMidday } from '@marcwiest/midday.js/vue';
 
 const headerRef = ref(null);
 useMidday(headerRef);
@@ -222,7 +229,7 @@ Or as a directive (import as `vMidday` for auto-registration in `<script setup>`
 
 ```html
 <script setup>
-import { vMidday } from 'midday.js/vue';
+import { vMidday } from '@marcwiest/midday.js/vue';
 </script>
 
 <template>
@@ -236,7 +243,7 @@ import { vMidday } from 'midday.js/vue';
 
 ```html
 <script>
-  import { midday } from 'midday.js/svelte';
+  import { midday } from '@marcwiest/midday.js/svelte';
 </script>
 
 <header use:midday>
@@ -249,7 +256,7 @@ import { vMidday } from 'midday.js/vue';
 Primitive:
 
 ```jsx
-import { createMidday } from 'midday.js/solid';
+import { createMidday } from '@marcwiest/midday.js/solid';
 
 function Header() {
   let headerEl;
@@ -266,7 +273,7 @@ function Header() {
 Or as a directive:
 
 ```jsx
-import { midday } from 'midday.js/solid';
+import { midday } from '@marcwiest/midday.js/solid';
 
 function Header() {
   return (
@@ -320,7 +327,7 @@ midday.js supports multiple independent fixed elements on the same page (e.g., a
 ```
 
 ```js
-import { midday } from 'midday.js';
+import { midday } from '@marcwiest/midday.js';
 
 const top = midday(document.querySelector('[data-midday="top"]'));
 const bottom = midday(document.querySelector('[data-midday="bottom"]'));
@@ -341,7 +348,7 @@ After hydration, the plugin creates variant clones in the browser. These clones 
 ```jsx
 // React (headless + SSR)
 import { useState, useEffect } from 'react';
-import { middayHeadless } from 'midday.js';
+import { middayHeadless } from '@marcwiest/midday.js';
 
 function Header() {
   const [mounted, setMounted] = useState(false);

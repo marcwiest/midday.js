@@ -1,7 +1,18 @@
 {
-  "name": "midday.js",
+  "name": "@marcwiest/midday.js",
   "version": "0.1.0",
   "description": "A modern vanilla JS plugin for fixed headers that change style as you scroll through sections. Zero dependencies. The spiritual successor to midnight.js.",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcwiest/midday.js.git"
+  },
+  "homepage": "https://github.com/marcwiest/midday.js#readme",
+  "bugs": {
+    "url": "https://github.com/marcwiest/midday.js/issues"
+  },
   "type": "module",
   "main": "./dist/midday.umd.js",
   "module": "./dist/midday.mjs",
@@ -36,8 +47,10 @@
     "dev": "vite",
     "build": "vite build && vite build --config vite.config.umd.ts && tsc --emitDeclarationOnly",
     "preview": "vite preview",
+    "build:demo": "vite build --config vite.config.demo.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepublishOnly": "pnpm build && pnpm test"
   },
   "keywords": [
     "header",
