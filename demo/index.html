@@ -34,8 +34,13 @@
     </div>
     <div class="dock-variant" id="dock-inverted" aria-hidden="true" inert>
       <span class="dock-icon">&#9670;</span>
-      <span class="dock-label">Different Height Example</span>
+      <span class="dock-label">Inverted</span>
       <span class="dock-icon">&#9670;</span>
+    </div>
+    <div class="dock-variant" id="dock-expanded" aria-hidden="true" inert>
+      <span class="dock-label">Expanded Dock</span>
+      <span class="dock-icon">&#9679;</span>
+      <span class="dock-label">Different Height</span>
     </div>
   </nav>
 
@@ -74,9 +79,9 @@
     <p>Only the bottom dock changes to "dark" here. The top header stays default (target="bottom").</p>
   </section>
 
-  <section id="contact" class="light-section">
-    <h2>Contact Section</h2>
-    <p>Default variant. The footer of the demo page.</p>
+  <section id="contact" class="expanded-section" data-midday-section="expanded" data-midday-target="top bottom">
+    <h2>Expanded Section</h2>
+    <p>Both bars use "expanded" — the dock variant is taller than its container, with extra height revealed as the section scrolls past.</p>
   </section>
 
   <script type="module">
@@ -98,6 +103,7 @@
         dark: document.getElementById('dock-dark'),
         accent: document.getElementById('dock-accent'),
         inverted: document.getElementById('dock-inverted'),
+        expanded: document.getElementById('dock-expanded'),
       },
       name: 'bottom',
       onChange: (variants) => {

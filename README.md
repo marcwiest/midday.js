@@ -393,6 +393,7 @@ The result is a pixel-perfect wipe transition at every section boundary.
 - In auto mode, variant wrappers get `data-midday-variant="<name>"` — target them with `[data-midday-variant="dark"]` or however you prefer
 - Transparent variant backgrounds work — each variant is clipped independently, so page content shows through where intended
 - In headless mode, you're responsible for positioning variant elements absolutely within the header and setting `aria-hidden`/`inert` on non-default variants
+- In headless mode, variant elements can have different heights than the header. The clip-path will track section boundaries exactly, with extra height revealing only when the section extends past the header edge
 
 ## Browser Support
 

@@ -99,10 +99,16 @@ header a:hover {
   background: #111;
   color: #0ff;
   pointer-events: none;
-  gap: 1.25rem;
+}
+
+#dock-expanded {
+  background: #065f46;
+  color: #d1fae5;
+  pointer-events: none;
+  gap: 1rem;
   font-size: 1rem;
   top: auto;
-  height: 99px;
+  height: 96px;
 }
 
 .dock-icon {
@@ -135,6 +141,11 @@ header a:hover {
 [data-midday-variant="inverted"] {
   background: #111;
   color: #0ff;
+}
+
+[data-midday-variant="expanded"] {
+  background: #065f46;
+  color: #d1fae5;
 }
 
 /* --- Sections --- */
@@ -183,4 +194,9 @@ section p {
 .light-section {
   background: #f5f5f5;
   color: #333;
+}
+
+.expanded-section {
+  background: #064e3b;
+  color: #d1fae5;
 }
