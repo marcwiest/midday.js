@@ -398,6 +398,18 @@ The result is a pixel-perfect wipe transition at every section boundary.
 
 Requires `clip-path: inset()` (97%+ global support), `ResizeObserver` (97%+), and `requestAnimationFrame`. Works in all modern browsers. No IE support.
 
+## Development
+
+```bash
+pnpm install          # Install dependencies
+pnpm dev              # Vite dev server (serves demo/ with HMR)
+pnpm build            # Full build: ESM + UMD + .d.ts
+pnpm test             # Run tests once
+pnpm test:watch       # Watch mode
+```
+
+Tests use [Vitest](https://vitest.dev/) + [happy-dom](https://github.com/nicedayfor/happy-dom). Global mocks for `ResizeObserver` and `requestAnimationFrame` are in `tests/setup.ts` — see the comments there for details on the mock strategy.
+
 ## License
 
 MIT
