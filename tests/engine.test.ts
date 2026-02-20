@@ -3,8 +3,10 @@ import { createEngine } from '../src/engine';
 import type { EngineConfig, VariantState, SectionData } from '../src/types';
 import { mockRect, setScrollY } from './helpers';
 
-function makeVariant(name: string): VariantState {
-  return { name, wrapper: document.createElement('div') };
+function makeVariant(name: string, rect?: Partial<DOMRect>): VariantState {
+  const wrapper = document.createElement('div');
+  mockRect(wrapper, { top: 0, height: 60, bottom: 60, ...rect });
+  return { name, wrapper };
 }
 
 /** Create a SectionData with pre-cached bounds (document-relative). */

@@ -29,7 +29,7 @@ describe('createMiddayHeadless', () => {
 
   it('applies clip-paths to provided variant elements', () => {
     const header = document.createElement('header');
-    mockRect(header, { top: 0, height: 60 });
+    mockRect(header, { top: 0, height: 60, bottom: 60 });
     document.body.appendChild(header);
 
     const section = document.createElement('section');
@@ -39,6 +39,8 @@ describe('createMiddayHeadless', () => {
 
     const defaultEl = document.createElement('div');
     const darkEl = document.createElement('div');
+    mockRect(defaultEl, { top: 0, height: 60, bottom: 60 });
+    mockRect(darkEl, { top: 0, height: 60, bottom: 60 });
 
     createMiddayHeadless({
       header,
@@ -89,11 +91,13 @@ describe('createMiddayHeadless', () => {
 
   it('refresh() rescans sections', () => {
     const header = document.createElement('header');
-    mockRect(header, { top: 0, height: 60 });
+    mockRect(header, { top: 0, height: 60, bottom: 60 });
     document.body.appendChild(header);
 
     const defaultEl = document.createElement('div');
     const darkEl = document.createElement('div');
+    mockRect(defaultEl, { top: 0, height: 60, bottom: 60 });
+    mockRect(darkEl, { top: 0, height: 60, bottom: 60 });
 
     const instance = createMiddayHeadless({
       header,
@@ -127,6 +131,8 @@ describe('createMiddayHeadless', () => {
     // Without name — targeted section is excluded
     const defaultEl = document.createElement('div');
     const darkEl = document.createElement('div');
+    mockRect(defaultEl, { top: 0, height: 60, bottom: 60 });
+    mockRect(darkEl, { top: 0, height: 60, bottom: 60 });
     createMiddayHeadless({
       header,
       variants: { default: defaultEl, dark: darkEl },
@@ -137,6 +143,8 @@ describe('createMiddayHeadless', () => {
     // With matching name — targeted section is included
     const defaultEl2 = document.createElement('div');
     const darkEl2 = document.createElement('div');
+    mockRect(defaultEl2, { top: 0, height: 60, bottom: 60 });
+    mockRect(darkEl2, { top: 0, height: 60, bottom: 60 });
     createMiddayHeadless({
       header,
       variants: { default: defaultEl2, dark: darkEl2 },

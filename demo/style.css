@@ -72,7 +72,7 @@ header a:hover {
   justify-content: center;
   gap: 0.5rem;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   will-change: clip-path;
@@ -99,7 +99,10 @@ header a:hover {
   background: #111;
   color: #0ff;
   pointer-events: none;
-  gap: 1rem;
+  gap: 1.25rem;
+  font-size: 1rem;
+  top: auto;
+  height: 99px;
 }
 
 .dock-icon {
@@ -173,7 +176,7 @@ section p {
 }
 
 .dark-section {
-  background: #1a1a2e;
+  background: #2a2a4e;
   color: #eee;
 }
 

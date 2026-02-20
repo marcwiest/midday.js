@@ -47,40 +47,48 @@ export function createEngine(config: EngineConfig): Engine {
     const headerViewBottom = headerViewTop + headerHeight;
 
     const activeVariants: ActiveVariant[] = [];
-    const clipMap = new Map<string, { topInset: number; bottomInset: number }>();
 
-    // Track the boundaries of all named variant coverage within the header.
-    // Used to compute the default variant's clip (the inverse/gap).
-    let coverageMin = headerHeight; // topmost covered pixel (relative to header)
-    let coverageMax = 0;            // bottommost covered pixel (relative to header)
+    // Header-relative coverage tracking for default variant gap computation.
+    const clipMap = new Map<string, { topInset: number; bottomInset: number }>();
+    let coverageMin = headerHeight;
+    let coverageMax = 0;
     let coveredPx = 0;
+
+    // Collect section viewport positions per variant name for per-variant overlap.
+    const sectionViews = new Map<string, { viewTop: number; viewBottom: number }[]>();
 
     for (const section of sections) {
       const sectionViewTop = section.top - scrollY;
       const sectionViewBottom = sectionViewTop + section.height;
 
+      // Header-relative overlap (for default variant coverage + progress)
       const overlapTop = Math.max(headerViewTop, sectionViewTop);
       const overlapBottom = Math.min(headerViewBottom, sectionViewBottom);
       const overlapPx = Math.max(0, overlapBottom - overlapTop);
 
-      if (overlapPx <= 0) continue;
+      if (overlapPx > 0) {
+        coveredPx += overlapPx;
+        const topInset = overlapTop - headerViewTop;
+        const bottomInset = headerViewBottom - overlapBottom;
+        coverageMin = Math.min(coverageMin, topInset);
+        coverageMax = Math.max(coverageMax, headerHeight - bottomInset);
 
-      coveredPx += overlapPx;
-
-      const topInset = overlapTop - headerViewTop;
-      const bottomInset = headerViewBottom - overlapBottom;
-
-      // Track coverage boundaries for default variant computation
-      coverageMin = Math.min(coverageMin, topInset);
-      coverageMax = Math.max(coverageMax, headerHeight - bottomInset);
-
-      const existing = clipMap.get(section.variant);
-      if (existing) {
-        existing.topInset = Math.min(existing.topInset, topInset);
-        existing.bottomInset = Math.min(existing.bottomInset, bottomInset);
-      } else {
-        clipMap.set(section.variant, { topInset, bottomInset });
+        const existing = clipMap.get(section.variant);
+        if (existing) {
+          existing.topInset = Math.min(existing.topInset, topInset);
+          existing.bottomInset = Math.min(existing.bottomInset, bottomInset);
+        } else {
+          clipMap.set(section.variant, { topInset, bottomInset });
+        }
       }
+
+      // Store section view positions for per-variant clip computation
+      let list = sectionViews.get(section.variant);
+      if (!list) {
+        list = [];
+        sectionViews.set(section.variant, list);
+      }
+      list.push({ viewTop: sectionViewTop, viewBottom: sectionViewBottom });
     }
 
     let defaultWrapper: HTMLElement | null = null;
@@ -90,26 +98,50 @@ export function createEngine(config: EngineConfig): Engine {
         defaultWrapper = variant.wrapper;
         continue;
       }
-      const clip = clipMap.get(variant.name);
-      if (clip && clip.topInset + clip.bottomInset < headerHeight) {
-        variant.wrapper.style.clipPath = `inset(${clip.topInset}px 0 ${clip.bottomInset}px 0)`;
-        activeVariants.push({
-          name: variant.name,
-          progress: (headerHeight - clip.topInset - clip.bottomInset) / headerHeight,
-        });
+
+      const views = sectionViews.get(variant.name);
+      if (!views) {
+        variant.wrapper.style.clipPath = 'inset(0 0 100% 0)';
+        continue;
+      }
+
+      // Compute overlap using the variant's own bounds.
+      // This ensures the clip edge tracks the section boundary exactly,
+      // even when the variant is taller than the header. Extra height
+      // only reveals when the section actually extends past the header edge.
+      const variantRect = variant.wrapper.getBoundingClientRect();
+      const vHeight = variantRect.height || headerHeight;
+      let adjTop = vHeight;
+      let adjBottom = vHeight;
+
+      for (const sv of views) {
+        const oTop = Math.max(variantRect.top, sv.viewTop);
+        const oBottom = Math.min(variantRect.bottom, sv.viewBottom);
+        if (oBottom <= oTop) continue;
+        adjTop = Math.min(adjTop, oTop - variantRect.top);
+        adjBottom = Math.min(adjBottom, variantRect.bottom - oBottom);
+      }
+
+      if (adjTop + adjBottom < vHeight) {
+        variant.wrapper.style.clipPath = `inset(${adjTop}px 0 ${adjBottom}px 0)`;
+        // Progress uses header-relative overlap for a meaningful 0–1 range
+        const headerClip = clipMap.get(variant.name);
+        const progress = headerClip
+          ? (headerHeight - headerClip.topInset - headerClip.bottomInset) / headerHeight
+          : 0;
+        activeVariants.push({ name: variant.name, progress });
       } else {
         variant.wrapper.style.clipPath = 'inset(0 0 100% 0)';
       }
     }
 
     // Default variant: clip to only the GAPS not covered by named variants.
-    // Instead of a full backdrop, the default only shows where no section variant exists.
     if (defaultWrapper) {
+      const defaultHeight = defaultWrapper.getBoundingClientRect().height || headerHeight;
+
       if (coveredPx >= headerHeight) {
-        // Named variants cover the entire header — hide default
         defaultWrapper.style.clipPath = 'inset(0 0 100% 0)';
       } else if (coveredPx <= 0) {
-        // No named variants visible — show default fully
         defaultWrapper.style.clipPath = 'inset(0)';
         activeVariants.unshift({
           name: defaultName,
@@ -117,17 +149,16 @@ export function createEngine(config: EngineConfig): Engine {
         });
       } else {
         // Partial coverage — show default in the gap.
-        // Coverage spans from coverageMin to coverageMax (relative to header top).
-        // The gap is on whichever side has uncovered space.
+        // Scale insets proportionally to default variant height.
         const gapAbove = coverageMin;
         const gapBelow = headerHeight - coverageMax;
 
         if (gapBelow >= gapAbove) {
-          // Gap is below coverage (named section leaving from top)
-          defaultWrapper.style.clipPath = `inset(${coverageMax}px 0 0 0)`;
+          const adjTop = defaultHeight * (coverageMax / headerHeight);
+          defaultWrapper.style.clipPath = `inset(${adjTop}px 0 0 0)`;
         } else {
-          // Gap is above coverage (named section leaving from bottom)
-          defaultWrapper.style.clipPath = `inset(0 0 ${headerHeight - coverageMin}px 0)`;
+          const adjBottom = defaultHeight * ((headerHeight - coverageMin) / headerHeight);
+          defaultWrapper.style.clipPath = `inset(0 0 ${adjBottom}px 0)`;
         }
 
         const defaultPx = headerHeight - coveredPx;
