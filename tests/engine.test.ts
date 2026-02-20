@@ -188,6 +188,75 @@ describe('createEngine — clip-path computation', () => {
   });
 });
 
+describe('createEngine — variant taller than header', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    setScrollY(0);
+  });
+
+  // Variant extends 20px above the 60px header (bottom-anchored at y=60)
+  // variantRect: top=-20, bottom=60, height=80
+
+  it('partial overlap → clip edge tracks section boundary exactly', () => {
+    const tall = makeVariant('dark', { top: -20, height: 80, bottom: 60 });
+    const config = createConfig({
+      variants: [makeVariant('default'), tall],
+      sections: [makeSection('dark', { top: 30, height: 400 })],
+    });
+    const engine = createEngine(config);
+
+    // Section covers bottom 30px of header (viewport 30–60).
+    // Variant overlap: max(-20, 30)=30, min(60, 430)=60
+    // adjTop = 30 - (-20) = 50, adjBottom = 60 - 60 = 0
+    // Clip edge in viewport: -20 + 50 = 30 = section edge ✓
+    expect(tall.wrapper.style.clipPath).toBe('inset(50px 0 0px 0)');
+    engine.destroy();
+  });
+
+  it('section extends past variant bounds → fully visible', () => {
+    const tall = makeVariant('dark', { top: -20, height: 80, bottom: 60 });
+    const config = createConfig({
+      variants: [makeVariant('default'), tall],
+      sections: [makeSection('dark', { top: -100, height: 600 })],
+    });
+    const engine = createEngine(config);
+
+    // Section extends well above variant top → inset(0)
+    expect(tall.wrapper.style.clipPath).toBe('inset(0px 0 0px 0)');
+    engine.destroy();
+  });
+
+  it('extra height reveals gradually as section extends past header edge', () => {
+    const tall = makeVariant('dark', { top: -20, height: 80, bottom: 60 });
+    const config = createConfig({
+      variants: [makeVariant('default'), tall],
+      sections: [makeSection('dark', { top: -10, height: 500 })],
+    });
+    const engine = createEngine(config);
+
+    // Section top at -10, extends 10px above header but not past variant top (-20).
+    // Variant overlap: max(-20, -10)=-10, min(60, 490)=60
+    // adjTop = -10 - (-20) = 10 → 10px of extra height still clipped
+    expect(tall.wrapper.style.clipPath).toBe('inset(10px 0 0px 0)');
+    engine.destroy();
+  });
+
+  it('section covers header exactly → extra height stays clipped', () => {
+    const tall = makeVariant('dark', { top: -20, height: 80, bottom: 60 });
+    const config = createConfig({
+      variants: [makeVariant('default'), tall],
+      sections: [makeSection('dark', { top: 0, height: 400 })],
+    });
+    const engine = createEngine(config);
+
+    // Section top at 0 = header top, doesn't extend above.
+    // adjTop = 0 - (-20) = 20 → full extra height clipped
+    // Shows 60px (same as header height) — no overlap into section above
+    expect(tall.wrapper.style.clipPath).toBe('inset(20px 0 0px 0)');
+    engine.destroy();
+  });
+});
+
 describe('createEngine — onChange', () => {
   beforeEach(() => {
     document.body.innerHTML = '';
