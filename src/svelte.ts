@@ -16,8 +16,12 @@ export function midday(
 
   return {
     update(newOptions?: MiddayOptions) {
-      instance?.destroy();
-      instance = createMidday(node, newOptions);
+      if (newOptions !== undefined) {
+        instance?.destroy();
+        instance = createMidday(node, newOptions);
+      } else {
+        instance?.refresh();
+      }
     },
     destroy() {
       instance?.destroy();

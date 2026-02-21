@@ -295,6 +295,28 @@ describe('createEngine — onChange', () => {
   });
 });
 
+describe('createEngine — ResizeObserver', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    setScrollY(0);
+  });
+
+  it('observes the element in addition to sections', () => {
+    const observeSpy = vi.spyOn(ResizeObserver.prototype, 'observe');
+    const config = createConfig({
+      sections: [makeSection('dark', { top: 0, height: 400 })],
+    });
+    const engine = createEngine(config);
+
+    const observedElements = observeSpy.mock.calls.map((c) => c[0]);
+    expect(observedElements).toContain(config.sections[0].el);
+    expect(observedElements).toContain(config.element);
+
+    observeSpy.mockRestore();
+    engine.destroy();
+  });
+});
+
 describe('createEngine — destroy', () => {
   beforeEach(() => {
     document.body.innerHTML = '';

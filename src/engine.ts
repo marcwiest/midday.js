@@ -185,6 +185,7 @@ export function createEngine(config: EngineConfig): Engine {
     for (const s of sections) {
       resizeObserver.observe(s.el);
     }
+    resizeObserver.observe(element);
   }
 
   function start(): void {

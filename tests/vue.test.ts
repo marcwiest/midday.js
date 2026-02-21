@@ -91,6 +91,27 @@ describe('vue adapter — vMidday directive', () => {
     ).toBeGreaterThan(0);
   });
 
+  it('updated hook calls refresh and picks up new sections', () => {
+    const header = setupHeader();
+    vMidday.mounted!(header, { value: undefined } as any, null as any, null as any);
+
+    expect(header.querySelectorAll('[data-midday-variant]')).toHaveLength(2);
+
+    // Add a new section to the DOM
+    const section = document.createElement('section');
+    section.setAttribute('data-midday-section', 'light');
+    mockRect(section, { top: 200, height: 400 });
+    document.body.appendChild(section);
+
+    // Simulate Vue's updated hook
+    vMidday.updated!(header, {} as any, null as any, null as any);
+
+    expect(header.querySelectorAll('[data-midday-variant]')).toHaveLength(3);
+    expect(
+      header.querySelector('[data-midday-variant="light"]'),
+    ).not.toBeNull();
+  });
+
   it('destroys instance in unmounted hook', () => {
     const header = setupHeader();
     vMidday.mounted!(header, { value: undefined } as any, null as any, null as any);

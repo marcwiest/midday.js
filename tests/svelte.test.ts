@@ -61,6 +61,27 @@ describe('svelte adapter — midday action', () => {
     action.destroy();
   });
 
+  it('update() without args preserves DOM mutations via refresh()', () => {
+    const header = setupHeader();
+    addSection('dark');
+    const action = midday(header);
+
+    // Initial: default + dark
+    expect(header.querySelectorAll('[data-midday-variant]')).toHaveLength(2);
+
+    // Mutate element content before refresh
+    header.querySelector('[data-midday-variant="default"]')!.innerHTML =
+      '<span>Updated Logo</span>';
+
+    // Add another section, then update without args (triggers refresh)
+    addSection('light');
+    action.update();
+
+    // Should pick up the new section
+    expect(header.querySelectorAll('[data-midday-variant]')).toHaveLength(3);
+    action.destroy();
+  });
+
   it('destroy() removes variant wrappers', () => {
     const header = setupHeader();
     addSection('dark');

@@ -36,6 +36,9 @@ export const vMidday: ObjectDirective<HTMLElement, MiddayOptions | undefined> = 
     const instance = createMidday(el, binding.value);
     (el as any).__middayInstance = instance;
   },
+  updated(el) {
+    (el as any).__middayInstance?.refresh();
+  },
   unmounted(el) {
     (el as any).__middayInstance?.destroy();
     delete (el as any).__middayInstance;

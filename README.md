@@ -181,6 +181,8 @@ useEffect(() => {
 }, [navItems]);
 ```
 
+**Section changes are not auto-detected.** The library uses `ResizeObserver` to track section and element *sizes*, but it does not watch for new or removed `[data-midday-section]` elements. In SPAs or pages with dynamic sections, call `refresh()` after route changes or any DOM mutation that adds, removes, or reorders sections.
+
 **Headless mode** doesn't manage element DOM — you own the variant elements. The engine reads element and variant sizes live on every scroll frame via `getBoundingClientRect()`, so size changes to your variant elements are picked up automatically. You only need `refresh()` when sections change, since section bounds are cached.
 
 ### `onChange` callback
