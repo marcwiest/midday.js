@@ -11,7 +11,7 @@ export function createMiddayHeadless(
   options: MiddayHeadlessOptions,
 ): MiddayInstance {
   const {
-    header,
+    element,
     variants: variantMap,
     defaultVariant = 'default',
     name: instanceName,
@@ -30,7 +30,7 @@ export function createMiddayHeadless(
   function init(): void {
     const sections = scanSections(instanceName);
     engine = createEngine({
-      header,
+      element,
       variants: toVariantStates(),
       defaultName: defaultVariant,
       sections,

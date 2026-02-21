@@ -11,15 +11,15 @@ const VARIANT_ATTR = 'data-midday-variant';
 const DEFAULT_NAME = 'default';
 
 export function createMidday(
-  header: HTMLElement,
+  element: HTMLElement,
   options: MiddayOptions = {},
 ): MiddayInstance {
   const { onChange } = options;
-  const instanceName = options.name ?? (header.getAttribute('data-midday-element') || undefined);
+  const instanceName = options.name ?? (element.getAttribute('data-midday-element') || undefined);
 
   // Store original state for destroy()
-  const originalHTML = header.innerHTML;
-  const originalOverflow = header.style.overflow;
+  const originalHTML = element.innerHTML;
+  const originalOverflow = element.style.overflow;
 
   let engine: Engine | null = null;
   let variants: VariantState[] = [];
@@ -31,11 +31,11 @@ export function createMidday(
       variantNames.add(s.variant);
     }
 
-    header.style.overflow = 'visible';
+    element.style.overflow = 'visible';
 
     const template = document.createDocumentFragment();
-    while (header.firstChild) {
-      template.appendChild(header.firstChild);
+    while (element.firstChild) {
+      template.appendChild(element.firstChild);
     }
 
     // Build clone wrappers first (while template nodes are intact for cloning)
@@ -44,7 +44,7 @@ export function createMidday(
       clones.push(createWrapper(name, template, true));
     }
 
-    // Sizing ghost: invisible clone in normal flow that drives the header's
+    // Sizing ghost: invisible clone in normal flow that drives the element's
     // height. Responds to media queries, font loading, etc. without JS
     // re-measurement. The absolute variant wrappers overlay it.
     // Must clone before the default wrapper moves the template nodes.
@@ -53,16 +53,16 @@ export function createMidday(
     ghost.style.pointerEvents = 'none';
     ghost.setAttribute('aria-hidden', 'true');
     ghost.appendChild(template.cloneNode(true));
-    header.appendChild(ghost);
+    element.appendChild(ghost);
 
     // Build default wrapper last — uses original nodes (preserves event listeners)
     const defaultVariant = createWrapper(DEFAULT_NAME, template, false);
 
-    header.appendChild(defaultVariant.wrapper);
+    element.appendChild(defaultVariant.wrapper);
 
     const allVariants = [defaultVariant];
     for (const clone of clones) {
-      header.appendChild(clone.wrapper);
+      element.appendChild(clone.wrapper);
       allVariants.push(clone);
     }
 
@@ -100,7 +100,7 @@ export function createMidday(
     const sections = scanSections(instanceName);
     variants = buildVariants();
     engine = createEngine({
-      header,
+      element,
       variants,
       defaultName: DEFAULT_NAME,
       sections,
@@ -113,7 +113,7 @@ export function createMidday(
       v.wrapper.remove();
     }
     // Restore original content so buildVariants() has children to template from
-    header.innerHTML = originalHTML;
+    element.innerHTML = originalHTML;
     const sections = scanSections(instanceName);
     variants = buildVariants();
     engine?.update(variants, sections);
@@ -128,8 +128,8 @@ export function createMidday(
     }
     variants = [];
 
-    header.innerHTML = originalHTML;
-    header.style.overflow = originalOverflow;
+    element.innerHTML = originalHTML;
+    element.style.overflow = originalOverflow;
   }
 
   init();

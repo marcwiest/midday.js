@@ -5,7 +5,7 @@
 [![CI](https://github.com/marcwiest/midday.js/actions/workflows/ci.yml/badge.svg)](https://github.com/marcwiest/midday.js/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A modern, zero-dependency vanilla JS plugin for fixed headers that change style as you scroll through page sections. The spiritual successor to [midnight.js](https://github.com/Aerolab/midnight.js).
+A modern, zero-dependency vanilla JS plugin for fixed elements that change style as you scroll through page sections. The spiritual successor to [midnight.js](https://github.com/Aerolab/midnight.js).
 
 **~1 kB gzipped** (auto mode) | TypeScript | Framework adapters (React, Vue, Svelte, Solid) included
 
@@ -36,9 +36,9 @@ Or via CDN (UMD):
 
 ## Quick Start
 
-### 1. Write one header, mark your sections
+### 1. Mark your element, add your sections
 
-You write a single header. Each section declares which header style it wants via `data-midday-section`:
+Add `data-midday-element` to your fixed element. Each section declares which variant it wants via `data-midday-section`:
 
 ```html
 <header data-midday-element>
@@ -72,7 +72,7 @@ const instance = midday(document.querySelector('[data-midday-element]'));
 
 ### 3. What happens next
 
-The plugin reads every unique `data-midday-section` value on the page (`"dark"`, `"accent"`) and clones your header once per variant. Each clone is wrapped in a container with a `data-midday-variant` attribute. Your original HTML stays as-is — the clones are created at runtime:
+The plugin reads every unique `data-midday-section` value on the page (`"dark"`, `"accent"`) and clones your element's content once per variant. Each clone is wrapped in a container with a `data-midday-variant` attribute. Your original HTML stays as-is — the clones are created at runtime:
 
 ```
 <header data-midday-element>                       ← your element (position: fixed)
@@ -122,13 +122,13 @@ header {
 }
 ```
 
-That's it. Scroll through your sections and the header transitions smoothly from one section to another.
+That's it. Scroll through your sections and the element transitions smoothly from one variant to another.
 
 ## API
 
-### `midday(header, options?)` — Auto mode
+### `midday(element, options?)` — Auto mode
 
-Clones your header content once per variant and manages everything. Sections are discovered automatically via `data-midday-section` attributes.
+Clones your element's content once per variant and manages everything. Sections are discovered automatically via `data-midday-section` attributes.
 
 ```js
 const instance = midday(document.querySelector('[data-midday-element]'));
@@ -147,7 +147,7 @@ You provide pre-rendered variant elements. The plugin only manages `clip-path` v
 import { middayHeadless } from '@marcwiest/midday.js';
 
 const instance = middayHeadless({
-  header: document.querySelector('header'),
+  element: document.querySelector('header'),
   variants: {
     default: document.querySelector('.header-default'),
     dark: document.querySelector('.header-dark'),
@@ -168,30 +168,30 @@ instance.destroy();  // Full teardown — removes clones, listeners, observers
 
 **When to call `refresh()`** — in both modes, call it when sections are added, removed, or reordered in the DOM. Beyond that, the two modes differ:
 
-**Auto mode** clones header content at init time. The clones and an internal sizing element are frozen snapshots of the header's DOM. CSS-driven size changes (media queries, viewport resize, font loading) are handled automatically — the sizing element is a real DOM node in normal flow and reflows with the page. But if the header's HTML content changes (nav items added/removed, conditional elements toggled), call `refresh()` to rebuild the clones and sizing element from the current DOM.
+**Auto mode** clones element content at init time. The clones and an internal sizing ghost are frozen snapshots of the element's DOM. CSS-driven size changes (media queries, viewport resize, font loading) are handled automatically — the sizing ghost is a real DOM node in normal flow and reflows with the page. But if the element's HTML content changes (nav items added/removed, conditional elements toggled), call `refresh()` to rebuild the clones and sizing ghost from the current DOM.
 
-Framework adapters initialize once on mount and don't auto-detect content changes. If your header content is dynamic, call `refresh()` after updates:
+Framework adapters initialize once on mount and don't auto-detect content changes. If your element's content is dynamic, call `refresh()` after updates:
 
 ```jsx
 // React example
-const instance = useMidday(headerRef);
+const instance = useMidday(elementRef);
 
 useEffect(() => {
   instance.current?.refresh();
 }, [navItems]);
 ```
 
-**Headless mode** doesn't manage header DOM — you own the variant elements. The engine reads header and variant sizes live on every scroll frame via `getBoundingClientRect()`, so size changes to your variant elements are picked up automatically. You only need `refresh()` when sections change, since section bounds are cached.
+**Headless mode** doesn't manage element DOM — you own the variant elements. The engine reads element and variant sizes live on every scroll frame via `getBoundingClientRect()`, so size changes to your variant elements are picked up automatically. You only need `refresh()` when sections change, since section bounds are cached.
 
 ### `onChange` callback
 
 Fires whenever the set of visible variants changes:
 
 ```js
-midday(header, {
+midday(element, {
   onChange: (variants) => {
     // variants: Array<{ name: string, progress: number }>
-    // progress: 0–1, how much of the header this variant covers
+    // progress: 0–1, how much of the element this variant covers
     console.log(variants);
     // e.g. [{ name: 'dark', progress: 0.7 }, { name: 'default', progress: 0.3 }]
   },
@@ -202,7 +202,7 @@ midday(header, {
 
 Each adapter is a separate tree-shakable entry point (~0.2 kB gzipped). Import only the one you need — the others are never bundled.
 
-The adapters wrap **auto mode** — your component renders a single header element, and cloning happens client-side on mount. This means your server-rendered HTML always contains just one header, keeping SEO clean (see [SSR & SEO](#ssr--seo) below).
+The adapters wrap **auto mode** — your component renders a single element, and cloning happens client-side on mount. This means your server-rendered HTML stays clean (see [SSR & SEO](#ssr--seo) below).
 
 ### React
 
@@ -211,11 +211,11 @@ import { useRef } from 'react';
 import { useMidday } from '@marcwiest/midday.js/react';
 
 function Header() {
-  const headerRef = useRef(null);
-  useMidday(headerRef);
+  const elementRef = useRef(null);
+  useMidday(elementRef);
 
   return (
-    <header ref={headerRef} style={{ position: 'fixed', top: 0, left: 0, right: 0 }}>
+    <header ref={elementRef} style={{ position: 'fixed', top: 0, left: 0, right: 0 }}>
       <Nav />
     </header>
   );
@@ -231,12 +231,12 @@ Composable:
 import { ref } from 'vue';
 import { useMidday } from '@marcwiest/midday.js/vue';
 
-const headerRef = ref(null);
-useMidday(headerRef);
+const elementRef = ref(null);
+useMidday(elementRef);
 </script>
 
 <template>
-  <header ref="headerRef">
+  <header ref="elementRef">
     <Nav />
   </header>
 </template>
@@ -276,11 +276,11 @@ Primitive:
 import { createMidday } from '@marcwiest/midday.js/solid';
 
 function Header() {
-  let headerEl;
-  createMidday(() => headerEl);
+  let el;
+  createMidday(() => el);
 
   return (
-    <header ref={headerEl} style={{ position: 'fixed', top: '0', left: '0', right: '0' }}>
+    <header ref={el} style={{ position: 'fixed', top: '0', left: '0', right: '0' }}>
       <Nav />
     </header>
   );
@@ -307,10 +307,10 @@ All adapters accept `onChange`:
 
 ```jsx
 // React
-useMidday(headerRef, { onChange: (v) => console.log(v) });
+useMidday(elementRef, { onChange: (v) => console.log(v) });
 
 // Vue (composable)
-useMidday(headerRef, { onChange: (v) => console.log(v) });
+useMidday(elementRef, { onChange: (v) => console.log(v) });
 
 // Vue (directive)
 <header v-midday="{ onChange: (v) => console.log(v) }"></header>
@@ -319,7 +319,7 @@ useMidday(headerRef, { onChange: (v) => console.log(v) });
 <header use:midday={{ onChange: (v) => console.log(v) }}></header>
 
 // Solid (primitive)
-createMidday(() => headerEl, { onChange: (v) => console.log(v) });
+createMidday(() => el, { onChange: (v) => console.log(v) });
 
 // Solid (directive)
 <header use:midday={{ onChange: (v) => console.log(v) }}></header>
@@ -333,7 +333,7 @@ midday.js supports multiple independent fixed elements on the same page (e.g., a
 <header data-midday-element="top">...</header>
 <nav class="app-bar" data-midday-element="bottom">...</nav>
 
-<!-- Targets only the top header -->
+<!-- Targets only the top element -->
 <section data-midday-section="accent" data-midday-target="top">...</section>
 
 <!-- Targets both (space-separated) -->
@@ -356,9 +356,9 @@ Each instance runs its own engine and only reacts to its own sections. The insta
 
 midday.js is designed to be SSR-safe by default.
 
-**Auto mode** (including all framework adapters) clones header content client-side on mount. The server-rendered HTML always contains a single, clean header element — no duplicate navigation links, no hidden clones. Search engine crawlers see exactly one header with one set of nav links.
+**Auto mode** (including all framework adapters) clones element content client-side on mount. The server-rendered HTML always contains a single, clean element — no duplicate navigation links, no hidden clones. Search engine crawlers see exactly one set of content.
 
-After hydration, the plugin creates variant clones in the browser. These clones are marked with `aria-hidden="true"` and `inert`, so they're invisible to screen readers and excluded from keyboard navigation. The original header content remains the accessible version.
+After hydration, the plugin creates variant clones in the browser. These clones are marked with `aria-hidden="true"` and `inert`, so they're invisible to screen readers and excluded from keyboard navigation. The original content remains the accessible version.
 
 **Headless mode** is different — since you provide the variant elements yourself, they exist in your markup. If you're using headless mode with SSR, render non-default variants client-side only to avoid duplicate content in the server HTML:
 
@@ -369,23 +369,23 @@ import { middayHeadless } from '@marcwiest/midday.js';
 
 function Header() {
   const [mounted, setMounted] = useState(false);
-  const headerRef = useRef(null);
+  const elementRef = useRef(null);
   const defaultRef = useRef(null);
   const darkRef = useRef(null);
 
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
-    if (!mounted || !headerRef.current) return;
+    if (!mounted || !elementRef.current) return;
     const instance = middayHeadless({
-      header: headerRef.current,
+      element: elementRef.current,
       variants: { default: defaultRef.current, dark: darkRef.current },
     });
     return () => instance.destroy();
   }, [mounted]);
 
   return (
-    <header ref={headerRef}>
+    <header ref={elementRef}>
       <div ref={defaultRef} className="header-default"><Nav /></div>
       {mounted && (
         <div ref={darkRef} className="header-dark" aria-hidden="true" inert="">
@@ -401,32 +401,32 @@ For most use cases, the framework adapters (which use auto mode) are simpler and
 
 ## How It Works
 
-midday.js uses `clip-path: inset()` to reveal and hide variant header elements as sections scroll past.
+midday.js uses `clip-path: inset()` to reveal and hide variant elements as sections scroll past.
 
-1. **Auto mode** clones the header content once per unique variant found in `data-midday-section` attributes. Each clone is wrapped in an absolutely-positioned container inside the header element.
+1. **Auto mode** clones the element's content once per unique variant found in `data-midday-section` attributes. Each clone is wrapped in an absolutely-positioned container inside the managed element.
 
-2. On each scroll frame, the plugin calculates which sections overlap the header's viewport position and by how many pixels.
+2. On each scroll frame, the plugin calculates which sections overlap the element's viewport position and by how many pixels.
 
-3. Each variant's container gets a `clip-path: inset(topPx 0 bottomPx 0)` that reveals exactly the portion corresponding to its section's overlap with the header. Every variant — including the default — is clipped to only its own region. Nothing is used as a backdrop, so transparent backgrounds work fine.
+3. Each variant's container gets a `clip-path: inset(topPx 0 bottomPx 0)` that reveals exactly the portion corresponding to its section's overlap with the element. Every variant — including the default — is clipped to only its own region. Nothing is used as a backdrop, so transparent backgrounds work fine.
 
 The result is a pixel-perfect wipe transition at every section boundary.
 
 ## Styling Guide
 
-- The header element should be `position: fixed` or `position: sticky`
+- The managed element should be `position: fixed` or `position: sticky`
 - In auto mode, variant wrappers get `data-midday-variant="<name>"` — target them with `[data-midday-variant="dark"]` or however you prefer
 - Transparent variant backgrounds work — each variant is clipped independently, so page content shows through where intended
-- In headless mode, you're responsible for positioning variant elements absolutely within the header and setting `aria-hidden`/`inert` on non-default variants
-- In headless mode, variant elements can have different heights than the header. The clip-path will track section boundaries exactly, with extra height revealing only when the section extends past the header edge
-- Auto mode uses `cloneNode(true)` to create variant copies. This duplicates DOM structure and attributes but **not** JavaScript event listeners attached via `addEventListener`. If your header contains interactive elements (nav links, dropdowns, etc.), use **event delegation** — attach a single listener to `document` and match with `closest()` — so events work in all variants
+- In headless mode, you're responsible for positioning variant elements absolutely within the managed element and setting `aria-hidden`/`inert` on non-default variants
+- In headless mode, variant elements can have different heights than the managed element. The clip-path will track section boundaries exactly, with extra height revealing only when the section extends past the element edge
+- Auto mode uses `cloneNode(true)` to create variant copies. This duplicates DOM structure and attributes but **not** JavaScript event listeners attached via `addEventListener`. If your element contains interactive elements (nav links, dropdowns, etc.), use **event delegation** — attach a single listener to `document` and match with `closest()` — so events work in all variants
 
 ## Overflow Content (Dropdowns, Flyouts)
 
 `clip-path: inset(...)` clips **all** descendants, including `position: fixed` elements like dropdown panels. In auto mode, `cloneNode(true)` also duplicates dropdown markup into every variant. There is no library-level fix for this, but the workaround is straightforward:
 
-**Keep triggers inside the header; render panels outside the header DOM entirely.**
+**Keep triggers inside the element; render panels outside the element's DOM entirely.**
 
-Position the panel as a sibling of the header (or in a portal container) and align it visually with its trigger. Since triggers get cloned into each variant, use **event delegation** to handle clicks:
+Position the panel as a sibling of the element (or in a portal container) and align it visually with its trigger. Since triggers get cloned into each variant, use **event delegation** to handle clicks:
 
 ```js
 document.addEventListener('click', (e) => {
@@ -442,7 +442,7 @@ document.addEventListener('click', (e) => {
 
 **CSS Anchor Positioning** offers a progressive enhancement: set `anchor-name` on the trigger and use `position-anchor` + `position: fixed` on the panel. This works across DOM subtrees without JavaScript positioning. Browser support is still limited (Chromium 125+).
 
-**Framework portals** solve this idiomatically: React's `createPortal`, Vue's `<Teleport to="body">`, Solid's `<Portal>`, or a Svelte portal library. Render the dropdown panel into `document.body` so it sits outside the clipped header entirely.
+**Framework portals** solve this idiomatically: React's `createPortal`, Vue's `<Teleport to="body">`, Solid's `<Portal>`, or a Svelte portal library. Render the dropdown panel into `document.body` so it sits outside the clipped element entirely.
 
 ## Browser Support
 

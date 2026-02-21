@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import {
   scanSections,
   getSectionBounds,
-  getHeaderBounds,
+  getElementBounds,
   cacheSectionBounds,
 } from '../src/utils';
 import type { SectionData } from '../src/types';
@@ -91,12 +91,12 @@ describe('getSectionBounds', () => {
   });
 });
 
-describe('getHeaderBounds', () => {
+describe('getElementBounds', () => {
   it('returns viewport-relative rect.top and rect.height', () => {
     const el = document.createElement('div') as HTMLElement;
     mockRect(el, { top: 10, height: 60 });
 
-    const bounds = getHeaderBounds(el);
+    const bounds = getElementBounds(el);
     expect(bounds.top).toBe(10);
     expect(bounds.height).toBe(60);
   });

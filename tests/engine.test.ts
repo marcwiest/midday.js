@@ -34,7 +34,7 @@ function createConfig(overrides: Partial<EngineConfig> = {}): EngineConfig {
     right: 1000,
   });
   return {
-    header,
+    element: header,
     variants: [makeVariant('default'), makeVariant('dark')],
     defaultName: 'default',
     sections: [],

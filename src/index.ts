@@ -8,10 +8,10 @@ import type {
 } from './types';
 
 /**
- * Auto mode — Initialize midday.js on a fixed header element.
- * Automatically clones header content for each variant and manages the DOM.
+ * Auto mode — Initialize midday.js on a fixed element.
+ * Automatically clones element content for each variant and manages the DOM.
  *
- * @param header - The fixed/sticky header element
+ * @param element - The fixed/sticky element marked with data-midday-element
  * @param options - Optional configuration
  * @returns Instance with refresh() and destroy() methods
  *
@@ -21,10 +21,10 @@ import type {
  * ```
  */
 export function midday(
-  header: HTMLElement,
+  element: HTMLElement,
   options?: MiddayOptions,
 ): MiddayInstance {
-  return createMidday(header, options);
+  return createMidday(element, options);
 }
 
 /**

@@ -8,15 +8,15 @@ import type { MiddayOptions, MiddayInstance } from './types';
  * Cloning happens client-side — safe for SSR.
  */
 export function useMidday(
-  headerRef: React.RefObject<HTMLElement | null>,
+  elementRef: React.RefObject<HTMLElement | null>,
   options?: MiddayOptions,
 ): React.RefObject<MiddayInstance | null> {
   const instanceRef = useRef<MiddayInstance | null>(null);
 
   useEffect(() => {
-    if (!headerRef.current) return;
+    if (!elementRef.current) return;
 
-    instanceRef.current = createMidday(headerRef.current, options);
+    instanceRef.current = createMidday(elementRef.current, options);
 
     return () => {
       instanceRef.current?.destroy();

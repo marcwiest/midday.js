@@ -8,15 +8,15 @@ import type { MiddayOptions, MiddayInstance } from './types';
  * Cloning happens client-side — safe for SSR.
  */
 export function createMidday(
-  headerAccessor: () => HTMLElement | null,
+  elementAccessor: () => HTMLElement | null,
   options?: MiddayOptions,
 ): () => MiddayInstance | null {
   let instance: MiddayInstance | null = null;
 
   onMount(() => {
-    const header = headerAccessor();
-    if (!header) return;
-    instance = createMiddayCore(header, options);
+    const el = elementAccessor();
+    if (!el) return;
+    instance = createMiddayCore(el, options);
   });
 
   onCleanup(() => {

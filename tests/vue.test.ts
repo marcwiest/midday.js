@@ -58,7 +58,7 @@ describe('vue adapter — useMidday composable', () => {
     ).toBeGreaterThan(0);
   });
 
-  it('skips init when headerRef is null', () => {
+  it('skips init when elementRef is null', () => {
     const instance = useMidday({ value: null } as any);
     mountedCb!();
     expect(instance.value).toBeNull();

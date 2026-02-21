@@ -5,10 +5,10 @@ import type {
   VariantState,
   ActiveVariant,
 } from './types';
-import { getHeaderBounds, cacheSectionBounds } from './utils';
+import { getElementBounds, cacheSectionBounds } from './utils';
 
 export function createEngine(config: EngineConfig): Engine {
-  let { header, variants, sections } = config;
+  let { element, variants, sections } = config;
   const { defaultName, onChange } = config;
 
   let rafId: number | null = null;
@@ -38,19 +38,19 @@ export function createEngine(config: EngineConfig): Engine {
   }
 
   function updateClipPaths(): void {
-    const headerRect = getHeaderBounds(header);
-    const headerHeight = headerRect.height;
-    if (headerHeight <= 0) return;
+    const elRect = getElementBounds(element);
+    const elHeight = elRect.height;
+    if (elHeight <= 0) return;
 
     const scrollY = window.scrollY;
-    const headerViewTop = headerRect.top;
-    const headerViewBottom = headerViewTop + headerHeight;
+    const elViewTop = elRect.top;
+    const elViewBottom = elViewTop + elHeight;
 
     const activeVariants: ActiveVariant[] = [];
 
-    // Header-relative coverage tracking for default variant gap computation.
+    // Element-relative coverage tracking for default variant gap computation.
     const clipMap = new Map<string, { topInset: number; bottomInset: number }>();
-    let coverageMin = headerHeight;
+    let coverageMin = elHeight;
     let coverageMax = 0;
     let coveredPx = 0;
 
@@ -61,17 +61,17 @@ export function createEngine(config: EngineConfig): Engine {
       const sectionViewTop = section.top - scrollY;
       const sectionViewBottom = sectionViewTop + section.height;
 
-      // Header-relative overlap (for default variant coverage + progress)
-      const overlapTop = Math.max(headerViewTop, sectionViewTop);
-      const overlapBottom = Math.min(headerViewBottom, sectionViewBottom);
+      // Element-relative overlap (for default variant coverage + progress)
+      const overlapTop = Math.max(elViewTop, sectionViewTop);
+      const overlapBottom = Math.min(elViewBottom, sectionViewBottom);
       const overlapPx = Math.max(0, overlapBottom - overlapTop);
 
       if (overlapPx > 0) {
         coveredPx += overlapPx;
-        const topInset = overlapTop - headerViewTop;
-        const bottomInset = headerViewBottom - overlapBottom;
+        const topInset = overlapTop - elViewTop;
+        const bottomInset = elViewBottom - overlapBottom;
         coverageMin = Math.min(coverageMin, topInset);
-        coverageMax = Math.max(coverageMax, headerHeight - bottomInset);
+        coverageMax = Math.max(coverageMax, elHeight - bottomInset);
 
         const existing = clipMap.get(section.variant);
         if (existing) {
@@ -107,10 +107,10 @@ export function createEngine(config: EngineConfig): Engine {
 
       // Compute overlap using the variant's own bounds.
       // This ensures the clip edge tracks the section boundary exactly,
-      // even when the variant is taller than the header. Extra height
-      // only reveals when the section actually extends past the header edge.
+      // even when the variant is taller than the element. Extra height
+      // only reveals when the section actually extends past the element edge.
       const variantRect = variant.wrapper.getBoundingClientRect();
-      const vHeight = variantRect.height || headerHeight;
+      const vHeight = variantRect.height || elHeight;
       let adjTop = vHeight;
       let adjBottom = vHeight;
 
@@ -124,10 +124,10 @@ export function createEngine(config: EngineConfig): Engine {
 
       if (adjTop + adjBottom < vHeight) {
         variant.wrapper.style.clipPath = `inset(${adjTop}px 0 ${adjBottom}px 0)`;
-        // Progress uses header-relative overlap for a meaningful 0–1 range
-        const headerClip = clipMap.get(variant.name);
-        const progress = headerClip
-          ? (headerHeight - headerClip.topInset - headerClip.bottomInset) / headerHeight
+        // Progress uses element-relative overlap for a meaningful 0–1 range
+        const elClip = clipMap.get(variant.name);
+        const progress = elClip
+          ? (elHeight - elClip.topInset - elClip.bottomInset) / elHeight
           : 0;
         activeVariants.push({ name: variant.name, progress });
       } else {
@@ -137,9 +137,9 @@ export function createEngine(config: EngineConfig): Engine {
 
     // Default variant: clip to only the GAPS not covered by named variants.
     if (defaultWrapper) {
-      const defaultHeight = defaultWrapper.getBoundingClientRect().height || headerHeight;
+      const defaultHeight = defaultWrapper.getBoundingClientRect().height || elHeight;
 
-      if (coveredPx >= headerHeight) {
+      if (coveredPx >= elHeight) {
         defaultWrapper.style.clipPath = 'inset(0 0 100% 0)';
       } else if (coveredPx <= 0) {
         defaultWrapper.style.clipPath = 'inset(0)';
@@ -151,20 +151,20 @@ export function createEngine(config: EngineConfig): Engine {
         // Partial coverage — show default in the gap.
         // Scale insets proportionally to default variant height.
         const gapAbove = coverageMin;
-        const gapBelow = headerHeight - coverageMax;
+        const gapBelow = elHeight - coverageMax;
 
         if (gapBelow >= gapAbove) {
-          const adjTop = defaultHeight * (coverageMax / headerHeight);
+          const adjTop = defaultHeight * (coverageMax / elHeight);
           defaultWrapper.style.clipPath = `inset(${adjTop}px 0 0 0)`;
         } else {
-          const adjBottom = defaultHeight * ((headerHeight - coverageMin) / headerHeight);
+          const adjBottom = defaultHeight * ((elHeight - coverageMin) / elHeight);
           defaultWrapper.style.clipPath = `inset(0 0 ${adjBottom}px 0)`;
         }
 
-        const defaultPx = headerHeight - coveredPx;
+        const defaultPx = elHeight - coveredPx;
         activeVariants.unshift({
           name: defaultName,
-          progress: defaultPx / headerHeight,
+          progress: defaultPx / elHeight,
         });
       }
     }

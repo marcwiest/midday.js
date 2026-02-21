@@ -8,7 +8,7 @@ describe('createMiddayHeadless', () => {
     setScrollY(0);
   });
 
-  it('does NOT modify header innerHTML', () => {
+  it('does NOT modify element innerHTML', () => {
     const header = document.createElement('header');
     header.innerHTML = '<span>Logo</span>';
     mockRect(header, { top: 0, height: 60 });
@@ -17,7 +17,7 @@ describe('createMiddayHeadless', () => {
     const originalHTML = header.innerHTML;
 
     createMiddayHeadless({
-      header,
+      element: header,
       variants: {
         default: document.createElement('div'),
         dark: document.createElement('div'),
@@ -43,7 +43,7 @@ describe('createMiddayHeadless', () => {
     mockRect(darkEl, { top: 0, height: 60, bottom: 60 });
 
     createMiddayHeadless({
-      header,
+      element: header,
       variants: { default: defaultEl, dark: darkEl },
     });
 
@@ -60,7 +60,7 @@ describe('createMiddayHeadless', () => {
     const darkEl = document.createElement('div');
 
     createMiddayHeadless({
-      header,
+      element: header,
       variants: { base: baseEl, dark: darkEl },
       defaultVariant: 'base',
     });
@@ -77,7 +77,7 @@ describe('createMiddayHeadless', () => {
     const removeSpy = vi.spyOn(window, 'removeEventListener');
 
     const instance = createMiddayHeadless({
-      header,
+      element: header,
       variants: { default: document.createElement('div') },
     });
 
@@ -100,7 +100,7 @@ describe('createMiddayHeadless', () => {
     mockRect(darkEl, { top: 0, height: 60, bottom: 60 });
 
     const instance = createMiddayHeadless({
-      header,
+      element: header,
       variants: { default: defaultEl, dark: darkEl },
     });
 
@@ -134,7 +134,7 @@ describe('createMiddayHeadless', () => {
     mockRect(defaultEl, { top: 0, height: 60, bottom: 60 });
     mockRect(darkEl, { top: 0, height: 60, bottom: 60 });
     createMiddayHeadless({
-      header,
+      element: header,
       variants: { default: defaultEl, dark: darkEl },
     });
     expect(defaultEl.style.clipPath).toBe('inset(0)');
@@ -146,7 +146,7 @@ describe('createMiddayHeadless', () => {
     mockRect(defaultEl2, { top: 0, height: 60, bottom: 60 });
     mockRect(darkEl2, { top: 0, height: 60, bottom: 60 });
     createMiddayHeadless({
-      header,
+      element: header,
       variants: { default: defaultEl2, dark: darkEl2 },
       name: 'top',
     });

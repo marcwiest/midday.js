@@ -8,14 +8,14 @@ import type { MiddayOptions, MiddayInstance } from './types';
  * Cloning happens client-side — safe for SSR.
  */
 export function useMidday(
-  headerRef: Ref<HTMLElement | null>,
+  elementRef: Ref<HTMLElement | null>,
   options?: MiddayOptions,
 ): Ref<MiddayInstance | null> {
   const instance = shallowRef<MiddayInstance | null>(null);
 
   onMounted(() => {
-    if (!headerRef.value) return;
-    instance.value = createMidday(headerRef.value, options);
+    if (!elementRef.value) return;
+    instance.value = createMidday(elementRef.value, options);
   });
 
   onUnmounted(() => {

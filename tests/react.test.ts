@@ -56,7 +56,7 @@ describe('react adapter — useMidday hook', () => {
     ).toBeGreaterThan(0);
   });
 
-  it('skips init when headerRef.current is null', () => {
+  it('skips init when elementRef.current is null', () => {
     const instanceRef = useMidday({ current: null } as any);
     effectSetup!();
     expect(instanceRef.current).toBeNull();

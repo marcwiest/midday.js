@@ -3,7 +3,7 @@
 export interface ActiveVariant {
   /** The variant name (from data-midday-section value) */
   name: string;
-  /** How much of the header this variant covers (0 to 1) */
+  /** How much of the element this variant covers (0 to 1) */
   progress: number;
 }
 
@@ -29,7 +29,7 @@ export interface VariantState {
 // --- Auto mode types ---
 
 export interface MiddayOptions {
-  /** Instance name for multi-instance scoping. Sections with a matching data-midday-target will be claimed by this instance. Defaults to the header's data-midday-element attribute value. */
+  /** Instance name for multi-instance scoping. Sections with a matching data-midday-target will be claimed by this instance. Defaults to the element's data-midday-element attribute value. */
   name?: string;
   /** Called when the set of visible variants changes */
   onChange?: ((variants: ActiveVariant[]) => void) | null;
@@ -38,8 +38,8 @@ export interface MiddayOptions {
 // --- Headless mode types ---
 
 export interface MiddayHeadlessOptions {
-  /** The fixed/sticky header element (used for position calculations) */
-  header: HTMLElement;
+  /** The fixed/sticky element (used for position calculations) */
+  element: HTMLElement;
   /** Map of variant name to wrapper element. The plugin manages clip-paths on these. */
   variants: Record<string, HTMLElement>;
   /** Which key in `variants` is the default (shown where no section overlaps). Defaults to 'default'. */
@@ -53,7 +53,7 @@ export interface MiddayHeadlessOptions {
 // --- Engine types (internal) ---
 
 export interface EngineConfig {
-  header: HTMLElement;
+  element: HTMLElement;
   variants: VariantState[];
   defaultName: string;
   sections: SectionData[];

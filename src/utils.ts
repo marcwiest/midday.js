@@ -13,10 +13,10 @@ export function getSectionBounds(el: Element): { top: number; height: number } {
 }
 
 /**
- * Get the header's current viewport-relative bounding rect.
+ * Get the element's current viewport-relative bounding rect.
  * This accounts for CSS transforms, sticky offsets, etc.
  */
-export function getHeaderBounds(el: HTMLElement): { top: number; height: number } {
+export function getElementBounds(el: HTMLElement): { top: number; height: number } {
   const rect = el.getBoundingClientRect();
   return {
     top: rect.top,
