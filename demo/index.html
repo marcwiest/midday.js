@@ -9,7 +9,7 @@
 </head>
 <body>
 
-  <header data-midday="top">
+  <header data-midday-element="top">
     <nav>
       <div class="logo">midday.js</div>
       <ul>
@@ -99,7 +99,7 @@
     const progressDefault = document.getElementById('progress-default');
     const progressDark = document.getElementById('progress-dark');
 
-    midday(document.querySelector('[data-midday="top"]'), {
+    midday(document.querySelector('[data-midday-element="top"]'), {
       onChange: (variants) => {
         console.log('Top (auto):', variants);
       },
@@ -129,7 +129,7 @@
     // variant's clip-path blocks hit-testing when it's clipped. Clicks in
     // the header area still fire on document (targeting the <header> itself),
     // so we match click coordinates against interactive element rects.
-    const header = document.querySelector('[data-midday="top"]');
+    const header = document.querySelector('[data-midday-element="top"]');
     const panel = document.getElementById('dropdown-panel');
 
     function hitTest(e, selector) {

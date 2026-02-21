@@ -29,7 +29,7 @@ export interface VariantState {
 // --- Auto mode types ---
 
 export interface MiddayOptions {
-  /** Instance name for multi-instance scoping. Sections with a matching data-midday-target will be claimed by this instance. Defaults to the header's data-midday attribute value. */
+  /** Instance name for multi-instance scoping. Sections with a matching data-midday-target will be claimed by this instance. Defaults to the header's data-midday-element attribute value. */
   name?: string;
   /** Called when the set of visible variants changes */
   onChange?: ((variants: ActiveVariant[]) => void) | null;

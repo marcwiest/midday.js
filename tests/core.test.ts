@@ -25,7 +25,7 @@ describe('createMidday', () => {
   });
 
   it('creates one variant wrapper per unique section + default', () => {
-    const header = setupDOM('data-midday', [
+    const header = setupDOM('data-midday-element', [
       '<section data-midday-section="dark"></section>',
       '<section data-midday-section="light"></section>',
     ]);
@@ -42,7 +42,7 @@ describe('createMidday', () => {
   });
 
   it('default wrapper does NOT have aria-hidden or inert', () => {
-    const header = setupDOM('data-midday', [
+    const header = setupDOM('data-midday-element', [
       '<section data-midday-section="dark"></section>',
     ]);
     createMidday(header);
@@ -55,7 +55,7 @@ describe('createMidday', () => {
   });
 
   it('clone wrappers have aria-hidden="true", inert, pointer-events: none', () => {
-    const header = setupDOM('data-midday', [
+    const header = setupDOM('data-midday-element', [
       '<section data-midday-section="dark"></section>',
     ]);
     createMidday(header);
@@ -69,7 +69,7 @@ describe('createMidday', () => {
   });
 
   it('all wrappers have position: absolute overlay styles', () => {
-    const header = setupDOM('data-midday', [
+    const header = setupDOM('data-midday-element', [
       '<section data-midday-section="dark"></section>',
     ]);
     createMidday(header);
@@ -86,7 +86,7 @@ describe('createMidday', () => {
   });
 
   it('sets header overflow to visible', () => {
-    const header = setupDOM('data-midday', [
+    const header = setupDOM('data-midday-element', [
       '<section data-midday-section="dark"></section>',
     ]);
     createMidday(header);
@@ -94,7 +94,7 @@ describe('createMidday', () => {
   });
 
   it('destroy() removes all variant wrappers', () => {
-    const header = setupDOM('data-midday', [
+    const header = setupDOM('data-midday-element', [
       '<section data-midday-section="dark"></section>',
     ]);
     const instance = createMidday(header);
@@ -105,7 +105,7 @@ describe('createMidday', () => {
   });
 
   it('destroy() restores original innerHTML', () => {
-    const header = setupDOM('data-midday', [
+    const header = setupDOM('data-midday-element', [
       '<section data-midday-section="dark"></section>',
     ]);
     const originalHTML = header.innerHTML;
@@ -116,7 +116,7 @@ describe('createMidday', () => {
   });
 
   it('destroy() restores header.style.overflow', () => {
-    const header = setupDOM('data-midday', [
+    const header = setupDOM('data-midday-element', [
       '<section data-midday-section="dark"></section>',
     ]);
     header.style.overflow = 'hidden';
@@ -127,7 +127,7 @@ describe('createMidday', () => {
   });
 
   it('refresh() rebuilds wrappers with updated sections', () => {
-    const header = setupDOM('data-midday', [
+    const header = setupDOM('data-midday-element', [
       '<section data-midday-section="dark"></section>',
     ]);
     const instance = createMidday(header);
@@ -147,8 +147,8 @@ describe('createMidday', () => {
     expect(names).toContain('light');
   });
 
-  it('options.name takes precedence over data-midday attribute', () => {
-    const header = setupDOM('data-midday="nav"', [
+  it('options.name takes precedence over data-midday-element attribute', () => {
+    const header = setupDOM('data-midday-element="nav"', [
       '<section data-midday-section="dark" data-midday-target="custom"></section>',
     ]);
     createMidday(header, { name: 'custom' });
@@ -158,7 +158,7 @@ describe('createMidday', () => {
   });
 
   it('inserts a sizing ghost with visibility: hidden in normal flow', () => {
-    const header = setupDOM('data-midday', [
+    const header = setupDOM('data-midday-element', [
       '<section data-midday-section="dark"></section>',
     ]);
     createMidday(header);
@@ -171,7 +171,7 @@ describe('createMidday', () => {
   });
 
   it('sizing ghost contains a clone of original header content', () => {
-    const header = setupDOM('data-midday', [
+    const header = setupDOM('data-midday-element', [
       '<section data-midday-section="dark"></section>',
     ]);
     createMidday(header);
@@ -180,7 +180,7 @@ describe('createMidday', () => {
   });
 
   it('destroy() removes sizing ghost along with wrappers', () => {
-    const header = setupDOM('data-midday', [
+    const header = setupDOM('data-midday-element', [
       '<section data-midday-section="dark"></section>',
     ]);
     const instance = createMidday(header);
@@ -189,8 +189,8 @@ describe('createMidday', () => {
     expect(ghost).toBeNull();
   });
 
-  it('falls back to data-midday attribute when options.name not set', () => {
-    const header = setupDOM('data-midday="nav"', [
+  it('falls back to data-midday-element attribute when options.name not set', () => {
+    const header = setupDOM('data-midday-element="nav"', [
       '<section data-midday-section="dark" data-midday-target="nav"></section>',
     ]);
     createMidday(header);

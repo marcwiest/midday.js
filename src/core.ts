@@ -15,7 +15,7 @@ export function createMidday(
   options: MiddayOptions = {},
 ): MiddayInstance {
   const { onChange } = options;
-  const instanceName = options.name ?? (header.getAttribute('data-midday') || undefined);
+  const instanceName = options.name ?? (header.getAttribute('data-midday-element') || undefined);
 
   // Store original state for destroy()
   const originalHTML = header.innerHTML;

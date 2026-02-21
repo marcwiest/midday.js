@@ -17,7 +17,7 @@ import type {
  *
  * @example
  * ```js
- * const instance = midday(document.querySelector('[data-midday]'));
+ * const instance = midday(document.querySelector('[data-midday-element]'));
  * ```
  */
 export function midday(

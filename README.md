@@ -41,7 +41,7 @@ Or via CDN (UMD):
 You write a single header. Each section declares which header style it wants via `data-midday-section`:
 
 ```html
-<header data-midday>
+<header data-midday-element>
   <nav>
     <a href="/" class="logo">Logo</a>
     <a href="/about">About</a>
@@ -67,7 +67,7 @@ You write a single header. Each section declares which header style it wants via
 ```js
 import { midday } from '@marcwiest/midday.js';
 
-const instance = midday(document.querySelector('[data-midday]'));
+const instance = midday(document.querySelector('[data-midday-element]'));
 ```
 
 ### 3. What happens next
@@ -75,7 +75,7 @@ const instance = midday(document.querySelector('[data-midday]'));
 The plugin reads every unique `data-midday-section` value on the page (`"dark"`, `"accent"`) and clones your header once per variant. Each clone is wrapped in a container with a `data-midday-variant` attribute. Your original HTML stays as-is — the clones are created at runtime:
 
 ```
-<header data-midday>                               ← your element (position: fixed)
+<header data-midday-element>                       ← your element (position: fixed)
   <div data-midday-variant="default">              ← default style (original content)
     <nav>Logo, About, Contact</nav>
   </div>
@@ -131,10 +131,10 @@ That's it. Scroll through your sections and the header transitions smoothly from
 Clones your header content once per variant and manages everything. Sections are discovered automatically via `data-midday-section` attributes.
 
 ```js
-const instance = midday(document.querySelector('[data-midday]'));
+const instance = midday(document.querySelector('[data-midday-element]'));
 
 // With optional onChange callback:
-const instance = midday(document.querySelector('[data-midday]'), {
+const instance = midday(document.querySelector('[data-midday-element]'), {
   onChange: (variants) => console.log(variants),
 });
 ```
@@ -327,11 +327,11 @@ createMidday(() => headerEl, { onChange: (v) => console.log(v) });
 
 ## Multiple Instances
 
-midday.js supports multiple independent fixed elements on the same page (e.g., a top header and a bottom app-bar). Name each instance via the `data-midday` attribute and use `data-midday-target` on sections to control which instance they affect.
+midday.js supports multiple independent fixed elements on the same page (e.g., a top header and a bottom app-bar). Name each instance via the `data-midday-element` attribute and use `data-midday-target` on sections to control which instance they affect.
 
 ```html
-<header data-midday="top">...</header>
-<nav class="app-bar" data-midday="bottom">...</nav>
+<header data-midday-element="top">...</header>
+<nav class="app-bar" data-midday-element="bottom">...</nav>
 
 <!-- Targets only the top header -->
 <section data-midday-section="accent" data-midday-target="top">...</section>
@@ -346,11 +346,11 @@ midday.js supports multiple independent fixed elements on the same page (e.g., a
 ```js
 import { midday } from '@marcwiest/midday.js';
 
-const top = midday(document.querySelector('[data-midday="top"]'));
-const bottom = midday(document.querySelector('[data-midday="bottom"]'));
+const top = midday(document.querySelector('[data-midday-element="top"]'));
+const bottom = midday(document.querySelector('[data-midday-element="bottom"]'));
 ```
 
-Each instance runs its own engine and only reacts to its own sections. The instance name defaults to the element's `data-midday` attribute value, or you can set it explicitly via `options.name`.
+Each instance runs its own engine and only reacts to its own sections. The instance name defaults to the element's `data-midday-element` attribute value, or you can set it explicitly via `options.name`.
 
 ## SSR & SEO
 
