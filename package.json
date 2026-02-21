@@ -1,6 +1,6 @@
 {
   "name": "@marcwiest/midday.js",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A modern vanilla JS plugin for fixed headers that change style as you scroll through sections. Zero dependencies. The spiritual successor to midnight.js.",
   "publishConfig": {
     "access": "public"
