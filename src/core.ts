@@ -44,8 +44,20 @@ export function createMidday(
       clones.push(createWrapper(name, template, true));
     }
 
+    // Sizing ghost: invisible clone in normal flow that drives the header's
+    // height. Responds to media queries, font loading, etc. without JS
+    // re-measurement. The absolute variant wrappers overlay it.
+    // Must clone before the default wrapper moves the template nodes.
+    const ghost = document.createElement('div');
+    ghost.style.visibility = 'hidden';
+    ghost.style.pointerEvents = 'none';
+    ghost.setAttribute('aria-hidden', 'true');
+    ghost.appendChild(template.cloneNode(true));
+    header.appendChild(ghost);
+
     // Build default wrapper last — uses original nodes (preserves event listeners)
     const defaultVariant = createWrapper(DEFAULT_NAME, template, false);
+
     header.appendChild(defaultVariant.wrapper);
 
     const allVariants = [defaultVariant];

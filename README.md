@@ -162,9 +162,26 @@ const instance = middayHeadless({
 Both modes return the same instance:
 
 ```js
-instance.refresh();  // Re-scan sections and recalculate (call after DOM changes)
+instance.refresh();  // Rebuild variants and re-scan sections
 instance.destroy();  // Full teardown — removes clones, listeners, observers
 ```
+
+**When to call `refresh()`** — in both modes, call it when sections are added, removed, or reordered in the DOM. Beyond that, the two modes differ:
+
+**Auto mode** clones header content at init time. The clones and an internal sizing element are frozen snapshots of the header's DOM. CSS-driven size changes (media queries, viewport resize, font loading) are handled automatically — the sizing element is a real DOM node in normal flow and reflows with the page. But if the header's HTML content changes (nav items added/removed, conditional elements toggled), call `refresh()` to rebuild the clones and sizing element from the current DOM.
+
+Framework adapters initialize once on mount and don't auto-detect content changes. If your header content is dynamic, call `refresh()` after updates:
+
+```jsx
+// React example
+const instance = useMidday(headerRef);
+
+useEffect(() => {
+  instance.current?.refresh();
+}, [navItems]);
+```
+
+**Headless mode** doesn't manage header DOM — you own the variant elements. The engine reads header and variant sizes live on every scroll frame via `getBoundingClientRect()`, so size changes to your variant elements are picked up automatically. You only need `refresh()` when sections change, since section bounds are cached.
 
 ### `onChange` callback
 
@@ -401,6 +418,31 @@ The result is a pixel-perfect wipe transition at every section boundary.
 - Transparent variant backgrounds work — each variant is clipped independently, so page content shows through where intended
 - In headless mode, you're responsible for positioning variant elements absolutely within the header and setting `aria-hidden`/`inert` on non-default variants
 - In headless mode, variant elements can have different heights than the header. The clip-path will track section boundaries exactly, with extra height revealing only when the section extends past the header edge
+- Auto mode uses `cloneNode(true)` to create variant copies. This duplicates DOM structure and attributes but **not** JavaScript event listeners attached via `addEventListener`. If your header contains interactive elements (nav links, dropdowns, etc.), use **event delegation** — attach a single listener to `document` and match with `closest()` — so events work in all variants
+
+## Overflow Content (Dropdowns, Flyouts)
+
+`clip-path: inset(...)` clips **all** descendants, including `position: fixed` elements like dropdown panels. In auto mode, `cloneNode(true)` also duplicates dropdown markup into every variant. There is no library-level fix for this, but the workaround is straightforward:
+
+**Keep triggers inside the header; render panels outside the header DOM entirely.**
+
+Position the panel as a sibling of the header (or in a portal container) and align it visually with its trigger. Since triggers get cloned into each variant, use **event delegation** to handle clicks:
+
+```js
+document.addEventListener('click', (e) => {
+  const trigger = e.target.closest('.dropdown-trigger');
+  if (!trigger) return;
+  const panel = document.querySelector('#dropdown-panel');
+  const rect = trigger.getBoundingClientRect();
+  panel.style.top = rect.bottom + 'px';
+  panel.style.left = rect.left + 'px';
+  panel.classList.toggle('open');
+});
+```
+
+**CSS Anchor Positioning** offers a progressive enhancement: set `anchor-name` on the trigger and use `position-anchor` + `position: fixed` on the panel. This works across DOM subtrees without JavaScript positioning. Browser support is still limited (Chromium 125+).
+
+**Framework portals** solve this idiomatically: React's `createPortal`, Vue's `<Teleport to="body">`, Solid's `<Portal>`, or a Svelte portal library. Render the dropdown panel into `document.body` so it sits outside the clipped header entirely.
 
 ## Browser Support
 

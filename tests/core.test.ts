@@ -157,6 +157,38 @@ describe('createMidday', () => {
     expect(wrappers).toHaveLength(2);
   });
 
+  it('inserts a sizing ghost with visibility: hidden in normal flow', () => {
+    const header = setupDOM('data-midday', [
+      '<section data-midday-section="dark"></section>',
+    ]);
+    createMidday(header);
+    const ghost = header.querySelector('[aria-hidden="true"]:not([data-midday-variant])') as HTMLElement;
+    expect(ghost).not.toBeNull();
+    expect(ghost.style.visibility).toBe('hidden');
+    expect(ghost.style.pointerEvents).toBe('none');
+    // Ghost should NOT be position: absolute (stays in normal flow for sizing)
+    expect(ghost.style.position).not.toBe('absolute');
+  });
+
+  it('sizing ghost contains a clone of original header content', () => {
+    const header = setupDOM('data-midday', [
+      '<section data-midday-section="dark"></section>',
+    ]);
+    createMidday(header);
+    const ghost = header.querySelector('[aria-hidden="true"]:not([data-midday-variant])') as HTMLElement;
+    expect(ghost.querySelector('span')?.textContent).toBe('Logo');
+  });
+
+  it('destroy() removes sizing ghost along with wrappers', () => {
+    const header = setupDOM('data-midday', [
+      '<section data-midday-section="dark"></section>',
+    ]);
+    const instance = createMidday(header);
+    instance.destroy();
+    const ghost = header.querySelector('[aria-hidden="true"]:not([data-midday-variant])');
+    expect(ghost).toBeNull();
+  });
+
   it('falls back to data-midday attribute when options.name not set', () => {
     const header = setupDOM('data-midday="nav"', [
       '<section data-midday-section="dark" data-midday-target="nav"></section>',

@@ -17,9 +17,17 @@
         <li><a href="#about">About</a></li>
         <li><a href="#work">Work</a></li>
         <li><a href="#contact">Contact</a></li>
+        <li><button class="dropdown-trigger">More &#9662;</button></li>
       </ul>
     </nav>
   </header>
+
+  <div class="dropdown-panel" id="dropdown-panel">
+    <a href="#hero">Home</a>
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#contact">Contact</a>
+  </div>
 
   <nav class="dock">
     <div class="dock-variant" id="dock-default">
@@ -114,6 +122,60 @@
         progressDefault.textContent = def ? `${Math.round(def.progress * 100)}%` : '0%';
         progressDark.textContent = dark ? `${Math.round(dark.progress * 100)}%` : '0%';
       },
+    });
+    // Header click delegation with coordinate fallback.
+    //
+    // Clone variants have pointer-events: none + inert, and the default
+    // variant's clip-path blocks hit-testing when it's clipped. Clicks in
+    // the header area still fire on document (targeting the <header> itself),
+    // so we match click coordinates against interactive element rects.
+    const header = document.querySelector('[data-midday="top"]');
+    const panel = document.getElementById('dropdown-panel');
+
+    function hitTest(e, selector) {
+      for (const el of header.querySelectorAll(selector)) {
+        const r = el.getBoundingClientRect();
+        if (r.width > 0 &&
+            e.clientX >= r.left && e.clientX <= r.right &&
+            e.clientY >= r.top && e.clientY <= r.bottom) {
+          return el;
+        }
+      }
+      return null;
+    }
+
+    function toggleDropdown(rect) {
+      panel.style.top = rect.bottom + 4 + 'px';
+      panel.style.right = (window.innerWidth - rect.right) + 'px';
+      panel.classList.toggle('open');
+    }
+
+    document.addEventListener('click', (e) => {
+      if (panel.contains(e.target)) return;
+
+      // Direct click (works when default variant is visible)
+      const directTrigger = e.target.closest('.dropdown-trigger');
+      if (directTrigger) {
+        toggleDropdown(directTrigger.getBoundingClientRect());
+        return;
+      }
+      const directLink = e.target.closest('header a');
+      if (directLink) return; // browser handles it natively
+
+      // Coordinate fallback for clone variants
+      const trigger = hitTest(e, '.dropdown-trigger');
+      if (trigger) {
+        toggleDropdown(trigger.getBoundingClientRect());
+        return;
+      }
+      const link = hitTest(e, 'a[href]');
+      if (link) {
+        panel.classList.remove('open');
+        window.location.href = link.href;
+        return;
+      }
+
+      panel.classList.remove('open');
     });
   </script>
 
