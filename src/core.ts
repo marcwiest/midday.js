@@ -17,8 +17,6 @@ export function createMidday(
   const { onChange } = options;
   const instanceName = options.name ?? (element.getAttribute('data-midday-element') || undefined);
 
-  // Store original state for destroy()
-  const originalHTML = element.innerHTML;
   const originalOverflow = element.style.overflow;
 
   let engine: Engine | null = null;
@@ -108,12 +106,31 @@ export function createMidday(
     });
   }
 
-  function refresh(): void {
-    for (const v of variants) {
-      v.wrapper.remove();
+  function extractLiveContent(): void {
+    const defaultWrapper = element.querySelector(
+      `[${VARIANT_ATTR}="${DEFAULT_NAME}"]`,
+    );
+
+    const wrappers = element.querySelectorAll(`[${VARIANT_ATTR}]`);
+    for (const w of wrappers) {
+      w.remove();
     }
-    // Restore original content so buildVariants() has children to template from
-    element.innerHTML = originalHTML;
+
+    // Clear remaining children (the sizing ghost)
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+
+    // Move the default wrapper's live child nodes back into element
+    if (defaultWrapper) {
+      while (defaultWrapper.firstChild) {
+        element.appendChild(defaultWrapper.firstChild);
+      }
+    }
+  }
+
+  function refresh(): void {
+    extractLiveContent();
     const sections = scanSections(instanceName);
     variants = buildVariants();
     engine?.update(variants, sections);
@@ -122,13 +139,8 @@ export function createMidday(
   function destroy(): void {
     engine?.destroy();
     engine = null;
-
-    for (const v of variants) {
-      v.wrapper.remove();
-    }
+    extractLiveContent();
     variants = [];
-
-    element.innerHTML = originalHTML;
     element.style.overflow = originalOverflow;
   }
 

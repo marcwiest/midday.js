@@ -126,6 +126,30 @@ describe('createMidday', () => {
     expect(header.style.overflow).toBe('hidden');
   });
 
+  it('refresh() preserves DOM mutations made after init', () => {
+    const header = setupDOM('data-midday-element', [
+      '<section data-midday-section="dark"></section>',
+    ]);
+    const instance = createMidday(header);
+
+    // Mutate the live DOM inside the default wrapper
+    const defaultWrapper = header.querySelector(
+      '[data-midday-variant="default"]',
+    ) as HTMLElement;
+    const link = document.createElement('a');
+    link.href = '/home';
+    link.textContent = 'Home';
+    defaultWrapper.appendChild(link);
+
+    instance.refresh();
+
+    // The new element should survive the refresh
+    const newDefault = header.querySelector(
+      '[data-midday-variant="default"]',
+    ) as HTMLElement;
+    expect(newDefault.querySelector('a')?.textContent).toBe('Home');
+  });
+
   it('refresh() rebuilds wrappers with updated sections', () => {
     const header = setupDOM('data-midday-element', [
       '<section data-midday-section="dark"></section>',
